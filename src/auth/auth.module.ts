@@ -6,11 +6,15 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JWTStrategy } from './strategies/jwt.strategy';
 import { MongooseModule } from '@nestjs/mongoose';
-import { PatientUser, PatientUserSchema } from 'src/patient/Schemas/patientUser.schema';
+// import { PatientUser, PatientUserSchema } from 'src/patient/Schemas/patientUser.schema';
+import { UserLogin, UserLoginSchema } from './schema/UserLogin.schema';
+import { UserRegister, UserRegistrationSchema } from './schema/UserRegistration.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{name : PatientUser.name, schema: PatientUserSchema }]),
+    // MongooseModule.forFeature([{name : PatientUser.name, schema: PatientUserSchema }]),
+    MongooseModule.forFeature([{name : UserLogin.name, schema: UserLoginSchema }]),
+    MongooseModule.forFeature([{name : UserRegister.name, schema: UserRegistrationSchema }]),
     PassportModule,
     JwtModule.register({
       secret : 'abc123',

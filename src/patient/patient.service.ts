@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PatientUser } from './Schemas/patientUser.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { encodePassword } from 'src/utils/bcrypt';
 import { CreatePatientUser } from './dto/createPatientUser.dto';
@@ -35,7 +35,11 @@ export class PatientService {
   }
 
   async addAppointment(username: any, createPatientAppointment: addPatientAppointments) {
-    return this.patientAppointmentModel.updateOne({ username }, { $set: createPatientAppointment });
+    // return this.patientAppointmentModel.updateOne({ username }, { $set: createPatientAppointment });
+      return this.patientAppointmentModel.updateOne(
+        { username },
+        { $push: { appointments: { $each: createPatientAppointment.appointments } } }
+      );
   }
 
   async changeStatusAppointment(username: any, appointmentId: string, newStatus: string) {
@@ -52,29 +56,23 @@ export class PatientService {
   async addAppointmentSummary(username: any, appointmentId: string, summary: SummaryDTO) {
     // First, find the user with the given username
     const user = await this.patientAppointmentModel.findOne({ username });
-  
-    if (user) {
-      // Find the appointment with the given ID in the user's appointments array
-      const appointment = user.appointments.find(appointment => appointment._id.toString() === appointmentId);
-      console.log(appointment)
-      if (appointment && appointment.status === 'Finished') {
-        // If the appointment exists and its status is 'Finished', add the summary
-        const appointmentIndex = user.appointments.indexOf(appointment);
-        const update = {};
-        console.log(summary)
-        update[`appointments.${appointmentIndex}.summary`] = summary;
-  
-        await this.patientAppointmentModel.updateOne({ username }, { $set: update });
-        console.log('Summary added to the appointment');
-      } else {
-        throw new Error('Appointment not found or not finished');
-      }
-    } else {
-      throw new Error('User not found');
-    }
-  }
-  
-  
-  
 
+    if (user) {
+        const appointment = user.appointments.find(appointment => appointment._id.toString() === appointmentId);
+        if (appointment && appointment.status === 'Finished') {
+          // If the appointment exists and its status is 'Finished', add the summary
+          const appointmentIndex = user.appointments.indexOf(appointment);
+          const update = {};
+          console.log(summary)
+          update[`appointments.${appointmentIndex}.summary`] = summary;
+
+          await this.patientAppointmentModel.updateOne({ username }, { $set: update });
+          console.log('Summary added to the appointment');
+        } else {
+          throw new Error('Appointment not found or not finished');
+        }
+      } else {
+        throw new Error('User not found');
+      }
+    }
 }

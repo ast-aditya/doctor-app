@@ -72,7 +72,7 @@ export class createPatientProfile {
     description: 'date of birth of the patient',
     example: '07-12-2002'
   })
-  @IsDate()
+  // @IsDate()
   readonly dob: Date;
 
   @ApiProperty({

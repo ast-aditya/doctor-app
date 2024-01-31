@@ -1,5 +1,6 @@
 import { IsString, IsInt, IsDate, IsOptional } from 'class-validator';
 import { Address } from './createPatientProfile.dto';
+import { ObjectId } from 'mongoose';
 
 export class Schedule{
     readonly date : Date;

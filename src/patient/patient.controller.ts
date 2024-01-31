@@ -15,18 +15,18 @@ export class PatientController {
 
     @Post()
     @ApiOperation({ summary: 'Create patient' })
-    @ApiResponse({ status: 201, description: 'The patient has been successfully created.'})
-    @ApiResponse({ status: 400, description: 'Bad Request.Username or password should not be empty.'})
+    @ApiResponse({ status: 201, description: 'The patient has been successfully created.' })
+    @ApiResponse({ status: 400, description: 'Bad Request.Username or password should not be empty.' })
     @ApiBody({
-        schema : {
+        schema: {
             type: 'object',
             properties: {
-                username : {
-                    type : 'string',
-                    example : 'testuser@gmail.com',
-                    description : 'this is a unique username'
+                username: {
+                    type: 'string',
+                    example: 'testuser@gmail.com',
+                    description: 'this is a unique username'
                 },
-                password : {
+                password: {
                     type: 'string',
                     example: 'test',
                     description: 'This contains password for the username'
@@ -38,7 +38,7 @@ export class PatientController {
         return this.patientService.createPatientUser(createPatientDto);
     }
 
-    @Put('profile')
+    @Post('profile')
     @ApiOperation({ summary: 'create patient profile' })
     @ApiBody({
         schema: {
@@ -119,39 +119,39 @@ export class PatientController {
             },
         },
     })
-    
-    
-    @ApiResponse({ status: 200, description: 'The patient profile has been successfully updated.'})
+
+
+    @ApiResponse({ status: 200, description: 'The patient profile has been successfully updated.' })
     @ApiBody({ type: createPatientProfile })
     updatePatientProfile(@Body() createPatientProfile: createPatientProfile, @Req() req: Request) {
         return this.patientService.createPatientProfile(req.user, createPatientProfile);
     }
 
-    @Put('addAppointment')
+    @Post('addAppointment')
     @ApiOperation({ summary: 'Add patient appointment' })
-    @ApiResponse({ status: 200, description: 'The appointment has been successfully added.'})
+    @ApiResponse({ status: 200, description: 'The appointment has been successfully added.' })
     @ApiBody({ type: addPatientAppointments })
     addPatientAppointment(@Body() AddPatientAppointments: addPatientAppointments, @Req() req: Request) {
         return this.patientService.addAppointment(req.user, AddPatientAppointments);
     }
 
-    @Patch('changeStatus/:appointmentId')
+    @Post('changeStatus/:appointmentId')
     @ApiOperation({ summary: 'Change appointment status' })
-    @ApiResponse({ status: 200, description: 'The appointment status has been successfully changed.'})
+    @ApiResponse({ status: 200, description: 'The appointment status has been successfully changed.' })
     @ApiParam({ name: 'appointmentId', type: 'string' })
-    // @ApiBody({ type: 'string', name: 'status' })
     async changeStatusAppointment(@Body('status') newStatus: string, @Req() req: Request, @Param('appointmentId') appointmentId: string) {
         const username = req.user;
         return this.patientService.changeStatusAppointment(username, appointmentId, newStatus);
     }
 
-    @Patch('addSummary/:appointmentId')
+    @Post('addSummary/:appointmentId')
     @ApiOperation({ summary: 'Add appointment summary' })
-    @ApiResponse({ status: 200, description: 'The appointment summary has been successfully added.'})
+    @ApiResponse({ status: 200, description: 'The appointment summary has been successfully added.' })
     @ApiParam({ name: 'appointmentId', type: 'string' })
     @ApiBody({ type: SummaryDTO })
     async addSummary(@Body() summary: SummaryDTO, @Req() req: Request, @Param('appointmentId') appointmentId: string) {
         const username = req.user;
         return this.patientService.addAppointmentSummary(username, appointmentId, summary);
     }
+
 }

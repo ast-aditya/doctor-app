@@ -36,6 +36,7 @@ export const ClinicSchema = SchemaFactory.createForClass(Clinic);
 
 @Schema()
 export class Appointment {
+
   @Prop({ required: true })
   date: Date;
 
