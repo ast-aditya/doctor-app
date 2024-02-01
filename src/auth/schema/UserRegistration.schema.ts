@@ -12,6 +12,12 @@ export class UserRegister extends Document {
 
   @Prop({required : true})
   role : string;
+
+  @Prop()
+  otp: string;
+
+  @Prop({default : false})
+  isVerified: boolean;
 }
 
 export const UserRegistrationSchema = SchemaFactory.createForClass(UserRegister);

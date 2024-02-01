@@ -17,7 +17,7 @@ import { CreateAppointment, CreateAppointmentSchema } from './Schemas/patientApp
     signOptions: { expiresIn: '1h' },
   })],
   providers: [PatientService],
-  controllers: [PatientController]
+  controllers: [PatientController] 
 })
 export class PatientModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

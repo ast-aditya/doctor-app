@@ -47,4 +47,14 @@ export class AuthController {
       return this.authService.registerUser(UserRegistrationDto);
     }
 
+    // @Get()
+    // sendMail(): void{
+    //     return this.authService.sendMail();
+    // }
+
+    @Post('verify-otp')
+    async verifyOtp(@Body('otp') otp: string, @Req() req: Request) {
+        const username = req.user;
+        return this.authService.verifyOtp(username, otp);
+    }
 }

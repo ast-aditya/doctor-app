@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
@@ -9,6 +9,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 // import { PatientUser, PatientUserSchema } from 'src/patient/Schemas/patientUser.schema';
 import { UserLogin, UserLoginSchema } from './schema/UserLogin.schema';
 import { UserRegister, UserRegistrationSchema } from './schema/UserRegistration.schema';
+import { JwtMiddleware } from 'src/patient/middlewares/jwt.middleware';
 
 @Module({
   imports: [
@@ -24,4 +25,10 @@ import { UserRegister, UserRegistrationSchema } from './schema/UserRegistration.
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JWTStrategy]
 })
-export class AuthModule {}
+export class AuthModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(JwtMiddleware)
+      .forRoutes(AuthController); // apply the middleware to the routes of PatientController
+  }
+}
