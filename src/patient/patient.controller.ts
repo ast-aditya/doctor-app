@@ -6,14 +6,13 @@ import { Request } from 'express';
 import { createPatientProfile } from './dto/createPatientProfile.dto';
 import { addPatientAppointments } from './dto/addPatientAppointments.dto';
 import { SummaryDTO } from './dto/appointmentSummary.dto';
-import { PatientUser } from './Schemas/patientUser.schema';
 
 @ApiTags('patient')
 @Controller('patient')
 export class PatientController {
     constructor(private patientService: PatientService) { }
 
-    @Post()
+    @Post('/create')
     @ApiOperation({ summary: 'Create patient' })
     @ApiResponse({ status: 201, description: 'The patient has been successfully created.' })
     @ApiResponse({ status: 400, description: 'Bad Request.Username or password should not be empty.' })

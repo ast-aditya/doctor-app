@@ -31,4 +31,12 @@ export class DoctorsService {
       console.log(createDoctorProfile)
       return this.doctorProfileModel.updateOne({ username }, { $set: createDoctorProfile });
   }
+<<<<<<< Updated upstream
+=======
+  async findAll(): Promise<DoctorUser[]> {
+    console.log("tmkc");
+    return this.doctorUserModel.find().exec();
+  }
+
+>>>>>>> Stashed changes
 }
