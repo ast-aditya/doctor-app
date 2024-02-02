@@ -14,6 +14,7 @@ async function bootstrap() {
   .setDescription('Swagger integrated for the modules')
   .setVersion('1.0')
   .addTag('Hosproject')
+  .addBearerAuth()
   .build()
 
   const document = SwaggerModule.createDocument(app,config);

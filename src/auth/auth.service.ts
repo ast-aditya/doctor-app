@@ -14,7 +14,6 @@ import { randomBytes } from 'crypto';
 @Injectable()
 export class AuthService {
     constructor(private jwtService : JwtService,
-        // @InjectModel('PatientUser') private userModel: Model<PatientUser> ,
         @InjectModel('UserLogin') private userLoginModel: Model<UserLogin> ,
         @InjectModel('UserRegister') private userRegisterModel: Model<UserRegister> ,
         private readonly mailerService : MailerService
@@ -30,23 +29,9 @@ export class AuthService {
             return this.jwtService.sign(user)
         }
     }
-    // async registerUser({username, password, role} : userRegistrationDto){
-    //     const hashedPassword = await encodePassword(password);
-    //     const newUser = new this.userRegisterModel({ username, password: hashedPassword, role });
-    //     return await newUser.save();
-    // }
-
-    // sendMail() : void{
-    //     this.mailerService.sendMail({
-    //         to: 'shadowmonarch712@gmail.com',
-    //         from: 'adityasrivastava0709@gmail.com',
-    //         subject: 'Verification token',
-    //         text: 'Welcome'
-    //     })
-    // }
     async registerUser({username, password, role} : userRegistrationDto){
         const hashedPassword = await encodePassword(password);
-        const otp = randomBytes(4).toString('hex');  // generate a 4-byte OTP
+        const otp = randomBytes(4).toString('hex'); 
         const newUser = new this.userRegisterModel({ username, password: hashedPassword, role, otp });
         await newUser.save();
     
@@ -54,6 +39,18 @@ export class AuthService {
         // this.sendMail(username, otp);
       }
     
+      async getAllDoctors(){
+        return this.userRegisterModel.find({ role: 'doctor' });
+      }
+
+      async getAllPatients(){
+          return this.userRegisterModel.find({ role: 'patient' });
+      }
+
+      async deleteUser(id: string){
+          return this.userRegisterModel.findByIdAndDelete(id);
+      }
+      
       sendMail(to: string, otp: string) : void{
         this.mailerService.sendMail({
           to,

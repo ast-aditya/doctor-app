@@ -19,16 +19,6 @@ export class PatientController {
         schema: {
             type: 'object',
             properties: {
-                username: {
-                    type: 'string',
-                    example: 'testuser@gmail.com',
-                    description: 'This is a unique username'
-                },
-                password: {
-                    type: 'string',
-                    example: 'test',
-                    description: 'This contains password for the username'
-                },
                 firstname: {
                     type: 'string',
                     example: 'John',
@@ -95,58 +85,33 @@ export class PatientController {
         },
     })
     @ApiResponse({ status: 200, description: 'The patient profile has been successfully updated.' })
-    @ApiBody({ type: createPatientProfile })
     updatePatientProfile(@Body() createPatientProfile: createPatientProfile, @Req() req: Request) {
         return this.patientService.createPatientProfile(req.user, createPatientProfile);
     }
 
     
-    @ApiOperation({ summary: 'get patient profile' })
+    @ApiOperation({ summary: 'get patient profile for logged in user' })
     @Get('profile')
     async getPatientProfile(@Req() req: Request) {
         return this.patientService.getPatientProfile(req.user);
     }
+
+    @ApiOperation({ summary: 'get patient profile by id' })
     @Get(':patientID/getProfile')
     async getPatientProfileByID(@Param('patientID') patientID: string) {
-        console.log("get profile by id in controller")
-        // console.log(patientID)
         return this.patientService.getProfileByID(patientID);
     }
+
+    @ApiOperation({ summary: 'delete patient profile for logged in user' })
     @Get('delete-profile')
     async deletePatientProfile(@Req() req: Request) {
     return this.patientService.deletePatientProfile(req.user);
   }
+
+    @ApiOperation({ summary: 'delete patient profile by id' })
     @Get(':patientID/deleteProfile')
     async deletePatientProfileByID(@Param('patientID') patientID : string) {
-    // return this.patientService.deletePatientProfile(patientID);
     return this.patientService.deleteProfileByID(patientID);
   }
-
-    // @Post('addAppointment')
-    // @ApiOperation({ summary: 'Add patient appointment' })
-    // @ApiResponse({ status: 200, description: 'The appointment has been successfully added.' })
-    // @ApiBody({ type: addPatientAppointments })
-    // addPatientAppointment(@Body() AddPatientAppointments: addPatientAppointments, @Req() req: Request) {
-    //     return this.patientService.addAppointment(req.user, AddPatientAppointments);
-    // }
-
-    // @Post('changeStatus/:appointmentId')
-    // @ApiOperation({ summary: 'Change appointment status' })
-    // @ApiResponse({ status: 200, description: 'The appointment status has been successfully changed.' })
-    // @ApiParam({ name: 'appointmentId', type: 'string' })
-    // async changeStatusAppointment(@Body('status') newStatus: string, @Req() req: Request, @Param('appointmentId') appointmentId: string) {
-    //     const username = req.user;
-    //     return this.patientService.changeStatusAppointment(username, appointmentId, newStatus);
-    // }
-
-    // @Post('addSummary/:appointmentId')
-    // @ApiOperation({ summary: 'Add appointment summary' })
-    // @ApiResponse({ status: 200, description: 'The appointment summary has been successfully added.' })
-    // @ApiParam({ name: 'appointmentId', type: 'string' })
-    // @ApiBody({ type: SummaryDTO })
-    // async addSummary(@Body() summary: SummaryDTO, @Req() req: Request, @Param('appointmentId') appointmentId: string) {
-    //     const username = req.user;
-    //     return this.patientService.addAppointmentSummary(username, appointmentId, summary);
-    // }
 
 }
