@@ -39,6 +39,9 @@ export class Address {
 }
 
 export class createPatientProfile {
+
+  readonly user_id : string;
+  
   @ApiProperty({
     description: 'first name of the patient',
     example: 'test'

@@ -6,7 +6,7 @@ export class Address {
   @Prop({ required: true })
   line1: string;
 
-  @Prop({ required: true })
+  @Prop()
   line2?: string;
 
   @Prop({ required: true })
@@ -26,8 +26,11 @@ export class PatientProfile extends Document {
   @Prop({ required: true })
   username: string;
 
-  @Prop({ required: true })
-  password: string;
+  // @Prop({ required: true })
+  // password: string;
+
+  @Prop({required: true})
+  user_id : string;
 
   @Prop({ required: true })
   firstname: string;
