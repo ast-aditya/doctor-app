@@ -51,7 +51,7 @@ export class AuthService {
         await newUser.save();
     
         // send the OTP to the user's email
-        this.sendMail(username, otp);
+        // this.sendMail(username, otp);
       }
     
       sendMail(to: string, otp: string) : void{

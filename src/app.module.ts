@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { DoctorsModule } from './doctors/doctors.module';
 import { AppointmentsModule } from './appointments/appointments.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { BillingModule } from './billing/billing.module';
 
 
 @Module({
@@ -18,7 +19,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
         pass : 'rgwovfbhzznbinbi'
       }
     }
-  })],
+  }), BillingModule],
   controllers: [AppController],
   providers: [AppService],
 })
