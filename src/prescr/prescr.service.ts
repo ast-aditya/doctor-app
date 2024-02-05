@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { prescrSchema } from './schemas/prescr.schema';
@@ -11,4 +11,17 @@ export class prescrService {
     const createdPrescription = new this.prescriptionModel(prescriptionDTO);
     return createdPrescription.save();
   }
+
+  async getPrescriptionsByDocId(docId: string): Promise<prescrSchema[]> {
+    console.log("the service is fine");
+    try {
+      const prescriptions = await this.prescriptionModel.find({ doc_id: docId }).exec();
+      console.log(prescriptions);
+      return prescriptions;
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching prescriptions:');
+
+    }
+  }
+  
 }

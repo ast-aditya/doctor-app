@@ -8,10 +8,10 @@ import { DoctorsModule } from './doctors/doctors.module';
 import { AppointmentsModule } from './appointments/appointments.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { BillingModule } from './billing/billing.module';
-
+import { PrescrModule } from './prescr/prescr.module';
 
 @Module({
-  imports: [MongooseModule.forRoot('mongodb+srv://shadowmonarch712:testuser@cluster0.mzexokf.mongodb.net/') , AuthModule, PatientModule,DoctorsModule, AppointmentsModule, MailerModule.forRoot({
+  imports: [MongooseModule.forRoot('mongodb+srv://shadowmonarch712:testuser@cluster0.mzexokf.mongodb.net/') , AuthModule, PatientModule,DoctorsModule,PrescrModule, AppointmentsModule, MailerModule.forRoot({
     transport: {
       host : 'smtp.gmail.com',
       auth : {

@@ -1,7 +1,8 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get, NotFoundException, Param } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { prescrService } from './prescr.service';
 import { PrescriptionDTO } from './dtos/prescr.dto';
+import { prescrSchema } from './schemas/prescr.schema';
 
 @Controller('prescriptions')
 export class prescrController {
@@ -51,5 +52,20 @@ export class prescrController {
   
    async create(@Body() prescriptionDTO: PrescriptionDTO): Promise<any> {
     return this.prescriptionService.create(prescriptionDTO);
+  }
+
+  @Get(':doc_id')
+  async getPrescriptionsByDocId(@Param('doc_id') docId: string): Promise<prescrSchema[]> {
+    console.log("the controller is working fine");
+    try {
+      const prescriptions = await this.prescriptionService.getPrescriptionsByDocId(docId);
+      if (!prescriptions || prescriptions.length === 0) {
+        throw new NotFoundException(`No prescriptions found for doc_id: ${docId}`);
+      }
+      return prescriptions;
+    } catch (error) {
+      // Handle any other errors (e.g., database connection issues)
+      throw new Error('Error fetching prescriptions');
+    }
   }
 }

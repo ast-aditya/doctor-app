@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-@Schema()
+@Schema({collection:"prescrSchema"})
 export class prescrSchema extends Document {
   @Prop()
   doc_id: string;
 
   @Prop()
-  clinic_id: string;
+  clinic_id: string;  
 
   @Prop()
   pat_id: string;
