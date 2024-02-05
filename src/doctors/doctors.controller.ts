@@ -1,39 +1,46 @@
-import { Body, Controller, Get, Post, Put, Req} from '@nestjs/common';
-import { DoctorPrfDto } from './dto/doctorPrf.dto';
-import { Request } from 'express';
+import { Controller, Post, Body, Get, Param, NotFoundException } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
-import { DoctorUser } from './dto/doctorUser.dto';
+import { DoctorProfile } from "./schemas/doctorsProfile.schema"
+import { ApiOperation, ApiResponse, ApiCreatedResponse } from '@nestjs/swagger';
+import { DoctorPrfDto } from './dto/doctorPrf.dto';
+import { prescrSchema } from 'src/prescr/schemas/prescr.schema';
 
 @Controller('doctors')
 export class DoctorsController {
-    constructor(private doctorService : DoctorsService){}
-    
-    @Post()
-    createDoctor(@Body() createDoctorDto : DoctorUser) {
-        return this.doctorService.DoctorUserDto(createDoctorDto);
-    }
+  constructor(private readonly doctorProfileService: DoctorsService) {}
 
-    @Get('profile')
-    getProfile(@Req() req: Request) {
-        // req.user is typically populated in middleware
-        const username = req.user;
-        return username;  
-    }
+  @Post('create')
+  @ApiOperation({ summary: 'Create Doctor' })
+   @ApiResponse({ status: 201, description: 'The Doctor has been successfully created.'})
+   @ApiResponse({ status: 400, description: 'Bad Request.'})
+   @ApiCreatedResponse({
+    description: "Doctor created successfully and fully",
+    type: DoctorPrfDto
+     })
+  
+   async createDoctor(@Body() DoctorDTO: DoctorPrfDto): Promise<any> {
+      return this.doctorProfileService.create(DoctorDTO);
+  }
 
-    @Get()
-    async findAll(): Promise<DoctorUser[]> {
-      const doctors = await this.doctorService.findAll();
-      console.log(doctors);
-      return doctors.map(doctor => ({
-        username: doctor.username,
-        password: doctor.password
-        
-      }));
-    }
+  @Get()
+  async getAllProfiles(): Promise<DoctorProfile[]> {
+    return this.doctorProfileService.findAllProfiles();
+  }
 
-    @Put('profile')
-    updateDoctorProfile(@Body() createDoctorsProfile: DoctorPrfDto, @Req() req: Request) {
-    // return this.patientService.updatePatientUser(req.user, updateProfileDto);
-    return this.doctorService.DoctorPrfDto(req.user, createDoctorsProfile);
-}
-}
+  @Get(':doc_id')
+  async getPrescriptionsByDocId(@Param('doc_id') docId: string): Promise<DoctorProfile[]> {
+    console.log("the controller is working fine");
+    try {
+      const tempDoctor = await this.doctorProfileService.getDoctorByDocId(docId);
+      if (!tempDoctor || tempDoctor.length === 0) {
+        throw new NotFoundException(`No prescriptions found for doc_id: ${docId}`);
+      }
+      return tempDoctor;
+    } catch (error) {
+      console.log(error);
+      throw new Error('Error fetching prescriptions');
+    }
+  }
+  }
+
+

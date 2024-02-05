@@ -1,39 +1,39 @@
-import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Injectable, InternalServerErrorException} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { encodePassword } from 'src/utils/bcrypt';
+import { Model } from 'mongoose';
 import { DoctorProfile } from './schemas/doctorsProfile.schema';
-import { DoctorUserSc } from './schemas/doctorsUser.schema';
 import { DoctorPrfDto } from './dto/doctorPrf.dto';
-import { DoctorUser } from './dto/doctorUser.dto';
-
-
 @Injectable()
 export class DoctorsService {
-    constructor(
-        @InjectModel(DoctorUserSc.name) private doctorUserModel: Model<DoctorUserSc>,
-        @InjectModel(DoctorProfile.name) private doctorProfileModel: Model<DoctorProfile>,
-      ) {}
+  constructor(
+    @InjectModel(DoctorProfile.name) private doctorProfileModel: Model<DoctorProfile>,
+  ) {}
 
-    
-    async DoctorUserDto(doctorDto: DoctorUser){
-        const password = encodePassword(doctorDto.password);
-        // const createdPatient = new this.patientUserModel(patientDto);
-        const createdDoctor = new this.doctorUserModel({
-          ...doctorDto,
-          password: password,
-      });
-        console.log("inside doctor service");
-        return createdDoctor.save();
+  async create(DoctorDTO: DoctorPrfDto): Promise<DoctorPrfDto> {
+    const createdPrescription = new this.doctorProfileModel(DoctorDTO);
+    return createdPrescription.save();
+  }
+
+  async findAllProfiles(): Promise<DoctorProfile[]> {
+    try {
+      return await this.doctorProfileModel.find().exec();
+    } catch (error) {
+      throw new Error('Error fetching doctor profiles');
     }
+  }
 
-    async DoctorPrfDto(username: any, createDoctorProfile: DoctorPrfDto) {
-      console.log(createDoctorProfile)
-      return this.doctorProfileModel.updateOne({ username }, { $set: createDoctorProfile });
+  async getDoctorByDocId(docId: string): Promise<DoctorProfile[]> {
+    console.log("the service is fine");
+    try {
+      const doctors = await this.doctorProfileModel.find({ doc_id: docId }).exec();
+      
+      return doctors;
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching prescriptions:');
+      
+
+    }
   }
-  async findAll(): Promise<DoctorUser[]> {
-    console.log("tmkc");
-    return this.doctorUserModel.find().exec();
-  }
+
 
 }

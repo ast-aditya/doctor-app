@@ -16,10 +16,9 @@ export class prescrService {
     console.log("the service is fine");
     try {
       const prescriptions = await this.prescriptionModel.find({ doc_id: docId }).exec();
-      console.log(prescriptions);
+      
       return prescriptions;
     } catch (error) {
-   
       throw new InternalServerErrorException('Error fetching prescriptions:');
       
 

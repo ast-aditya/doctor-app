@@ -1,9 +1,15 @@
 // doctorProfile.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, HydratedDocument } from 'mongoose';
 
-@Schema({ collection: 'doctoruserssc'} )
+export type DoctorDocument = HydratedDocument<DoctorProfile>
+
+@Schema({ collection: 'doctoruserscs'} )
+
 export class DoctorProfile extends Document {
+  @Prop()
+  doc_id: string;
+  
   @Prop()
   firstName: string;
 
@@ -17,20 +23,14 @@ export class DoctorProfile extends Document {
   password: string;
 
   @Prop()
-  contactNumber: string;
+  contactNumber: number;
 
   @Prop()
   specialization: string;
 
   @Prop()
   location:string[]; 
-  // {
-    // address: string;
-    // coordinates: {
-    //   latitude: number;
-    //   longitude: number;
-    // };
-  // };
+
 
   @Prop()
   education: Array<{
