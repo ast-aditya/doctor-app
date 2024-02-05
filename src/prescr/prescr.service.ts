@@ -19,7 +19,9 @@ export class prescrService {
       console.log(prescriptions);
       return prescriptions;
     } catch (error) {
+   
       throw new InternalServerErrorException('Error fetching prescriptions:');
+      
 
     }
   }

@@ -64,7 +64,7 @@ export class prescrController {
       }
       return prescriptions;
     } catch (error) {
-      // Handle any other errors (e.g., database connection issues)
+      console.log(error);
       throw new Error('Error fetching prescriptions');
     }
   }
