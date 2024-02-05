@@ -7,7 +7,7 @@ export class Address {
     example: 'abc-123'
   })
   @IsString()
-  readonly line1: string;
+  readonly line1?: string;
 
  @ApiProperty({
     description: 'line 2 of the address',
@@ -24,55 +24,52 @@ export class Address {
   })
 
   @IsString()
-  readonly city: string;
+  readonly city?: string;
 
   @ApiProperty({
     description: 'state of the patient',
     example: 'Uttar Pradesh'
   })
   @IsString()
-  readonly state: string;
+  readonly state?: string;
 
   @ApiProperty()
   @IsInt()
-  readonly pincode: number;
+  readonly pincode?: number;
 }
 
-export class createPatientProfile {
-
-  readonly user_id : string;
-
+export class updatePatientProfile {
 
   @ApiProperty({
     description: 'age of the patient',
     example: 18
   })
-  @IsInt()
-  readonly age: number;
+  // @IsInt()
+  readonly age?: number;
 
   @ApiProperty({
     description: 'gender of the patient',
     example: 'male'
   })
-  @IsString()
-  readonly gender: string;
+  // @IsString()
+  readonly gender?: string;
 
   @ApiProperty({
     description: 'date of birth of the patient',
     example: '07-12-2002'
   })
   // @IsDate()
-  readonly dob: Date;
+  readonly dob?: Date;
 
   @ApiProperty({
     description: 'address of the patient',
   })
-  readonly address: Address;
+  readonly address?: Address;
 
   @ApiProperty({
     description: 'contact number of the patient',
     example: '1234567890'
   })
-  @IsInt()
-  readonly contact: number;
+  // @IsInt()
+  readonly contact?: number;
 }

@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, ObjectId, Types } from 'mongoose';
 import { Address } from './patientProfile.schema';
-import { SummaryDTO } from '../dto/appointmentSummary.dto';
 
 @Schema()
 export class Schedule {
@@ -52,8 +51,8 @@ export class Appointment {
   @Prop({ type: Types.ObjectId })
   _id: Types.ObjectId;
 
-  @Prop()
-  summary: SummaryDTO;
+  // @Prop()
+  // summary: SummaryDTO;
 }
 
 export const AppointmentSchema = SchemaFactory.createForClass(Appointment);

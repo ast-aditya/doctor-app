@@ -23,21 +23,19 @@ export const AddressSchema = SchemaFactory.createForClass(Address);
 
 @Schema({ collection: 'patientusers' })
 export class PatientProfile extends Document {
-  @Prop({ required: true })
-  username: string;
 
-  // @Prop({ required: true })
-  // password: string;
+  @Prop()
+  user_Id : string;
 
-  @Prop({required: true})
-  user_id : string;
+  @Prop()
+  name : string;
 
-  @Prop({ required: true })
-  firstname: string;
+  @Prop()
+  email : string;
 
-  @Prop({ required: true })
-  secondname: string;
-
+  @Prop()
+  role : string;
+  
   @Prop({ required: true })
   age: number;
 

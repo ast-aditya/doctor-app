@@ -1,79 +1,150 @@
-import { Injectable } from '@nestjs/common';
-import { PatientUser } from './Schemas/patientUser.schema';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { encodePassword } from 'src/utils/bcrypt';
-import { CreatePatientUser } from './dto/createPatientUser.dto';
 import { createPatientProfile } from './dto/createPatientProfile.dto';
 import { PatientProfile } from './Schemas/patientProfile.schema';
-import { addPatientAppointments } from './dto/addPatientAppointments.dto';
-import { CreateAppointment } from './Schemas/patientAppointment.schema';
-import { SummaryDTO } from './dto/appointmentSummary.dto';
+import { UserService } from 'src/nauth/user.service';
+import { updatePatientProfile } from './dto/updatePatientProfile.dto';
 
 @Injectable()
 export class PatientService {
   constructor(
-    @InjectModel(PatientUser.name) private patientUserModel: Model<PatientUser>,
     @InjectModel(PatientProfile.name) private patientProfileModel: Model<PatientProfile>,
-    @InjectModel(CreateAppointment.name) private patientAppointmentModel: Model<CreateAppointment>,
+    private UserService : UserService
   ) { }
 
   // to create profile for logged in user
-  async createPatientProfile(user: any, createPatientProfile: createPatientProfile) {
-    const username = user.username
-    const user_id = user.id;
+  async createPatientProfile(createPatientProfile: createPatientProfile, user_Id : string) {
+    try {
+        const {age, gender, dob, address, contact} = createPatientProfile;
+        const user = await this.UserService.getUserbyId(user_Id);
+        if(!user){
+          throw new NotFoundException('User not found');
+      }
 
-    const updatedProfile = {
-      ...createPatientProfile,
-      user_id: user_id,
-    };
-  
-    return this.patientProfileModel.updateOne({ username }, { $set: updatedProfile }, { upsert: true });
+      // const existProfile = await this.getPatientProfile(user_Id);
+      // console.log(existProfile)
+      // if(existProfile){
+      //   console.log("inside error")
+      //   throw new ConflictException('User Profile already exists');
+      // }
+      
+        const newProfile = new this.patientProfileModel({
+          user_Id: user_Id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          age: age,
+          gender: gender,
+          dob: dob,
+          address: address,
+          contact: contact
+        });
+
+        const userProfile = await newProfile.save();
+        console.log(`User Profile created successfully with Id : ${userProfile.id}`);
+        return userProfile;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error while creating profile ${error.message}`,
+    );
+    }
+}
+
+
+async updatePatientProfile(updatePatientProfile: updatePatientProfile, user_Id : string) {
+  try {
+      const {age, gender, dob, address, contact} = updatePatientProfile;
+      console.log("first")
+      const existProfile = await this.getPatientProfile(user_Id);
+      if(!existProfile){
+        throw new NotFoundException('User Profile do not exists');
+      }
+      const user = await this.UserService.getUserbyId(user_Id);
+      console.log(user)
+      if(!user){
+        throw new NotFoundException('User not found');
+    }
+    console.log(dob)
+    console.log(gender)
+    console.log(age)
+
+      const updatedProfile = {
+        user_Id: user_Id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        age: age,
+        gender: gender,
+        dob: dob,
+        address: address,
+        contact: contact
+      };
+
+      return await this.patientProfileModel.updateOne({ user_Id: user_Id }, { $set: updatedProfile }, { upsert: true });
+  } catch (error) {
+    throw new InternalServerErrorException(
+      `Error while updating profile ${error.message}`,
+  );
   }
+}
+
+
 
   // get logged in users profile
-  async getPatientProfile(user: any) {
-    const username = user.username;
-    console.log(username)
-    return this.patientProfileModel.findOne({ username });
-  }
+  async getPatientProfile(user_Id: string) {
+    try {
+        const patientProfile = await this.patientProfileModel.findOne({ user_Id });
+        if (!patientProfile) {
+            throw new NotFoundException('Patient profile not found');
+        }
+        return patientProfile;
+    } catch (error) {
+      console.error(`Error occurred getting the user profile: ${error}`);
+      throw error;
+    }
+}
+
 
   // delete profile by logged in user
-  async deletePatientProfile(user: any) {
-    const username = user.username;
-    return this.patientProfileModel.deleteOne({ username });
-  }
-
-  // get profile by id
-  async getProfileByID(user_id: string){
+  async deletePatientProfile(user_Id: string) {
     try {
-      const profile = await this.patientProfileModel.findOne({ user_id });
-      if (!profile) {
-        console.log(`No profile found for patientID: ${user_id}`);
-      } else {
-        console.log(profile);
-      }
-      return profile;
+        const existProfile = await this.getPatientProfile(user_Id);
+        if(!existProfile){
+            throw new NotFoundException('User Profile do not exists');
+        }
+        return await this.patientProfileModel.deleteOne({ user_Id: user_Id });
     } catch (error) {
-      console.error(`Error fetching profile for patientID: ${user_id}`, error);
-      throw error;
+        console.error(`Error occurred deleting the user profile: ${error}`);
+        throw error;
     }
+}
+// get profile by id
+async getProfileByID(user_Id: string){
+  try {
+    const profile = await this.patientProfileModel.findOne({ user_Id });
+    if (!profile) {
+      throw new NotFoundException('Patient profile not found');
+    }
+    return profile;
+  } catch (error) {
+    console.error(`Error occurred getting the user profile: ${error}`);
+    throw error;
   }
+}
 
-  // delete profile by id
-  async deleteProfileByID(user_id: string){
-    console.log("getProfileByID")
-    try {
-      const profile = await this.patientProfileModel.findOneAndDelete({ user_id });
-      if (!profile) {
-        console.log(`No profile found for patientID: ${user_id}`);
-      } else {
-        console.log(profile);
-      }
-      return profile;
-    } catch (error) {
-      console.error(`Error fetching profile for patientID: ${user_id}`, error);
-      throw error;
+// delete profile by id
+async deleteProfileByID(user_Id: string){
+  try {
+    const existProfile = await this.getPatientProfile(user_Id);
+    if(!existProfile){
+      throw new NotFoundException('User Profile do not exists');
     }
+    return await this.patientProfileModel.deleteOne({ user_Id: user_Id });
+  } catch (error) {
+    console.error(`Error occurred deleting the user profile: ${error}`);
+    throw error;
   }
+}
+
 }
