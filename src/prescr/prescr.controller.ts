@@ -21,18 +21,11 @@ export class prescrController {
       return this.prescriptionService.create(prescriptionDTO);
   }
 
+  
   @Get(':doc_id')
   async getPrescriptionsByDocId(@Param('doc_id') docId: string): Promise<prescrSchema[]> {
     console.log("the controller is working fine");
-    try {
       const prescriptions = await this.prescriptionService.getPrescriptionsByDocId(docId);
-      if (!prescriptions || prescriptions.length === 0) {
-        throw new NotFoundException(`No prescriptions found for doc_id: ${docId}`);
-      }
       return prescriptions;
-    } catch (error) {
-      console.log(error);
-      throw new Error('Error fetching prescriptions');
-    }
   }
 }

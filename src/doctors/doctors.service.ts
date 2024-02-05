@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { DoctorProfile } from './schemas/doctorsProfile.schema';
@@ -26,12 +26,13 @@ export class DoctorsService {
     console.log("the service is fine");
     try {
       const doctors = await this.doctorProfileModel.find({ doc_id: docId }).exec();
-      
+      if (!doctors || doctors.length === 0) {
+        throw new NotFoundException(`No prescriptions found for doc_id: ${docId}`);
+      }
       return doctors;
     } catch (error) {
-      throw new InternalServerErrorException('Error fetching prescriptions:');
+      throw new InternalServerErrorException('Error fetching doctors from service');
       
-
     }
   }
 

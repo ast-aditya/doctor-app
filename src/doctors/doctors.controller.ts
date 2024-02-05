@@ -30,16 +30,9 @@ export class DoctorsController {
   @Get(':doc_id')
   async getPrescriptionsByDocId(@Param('doc_id') docId: string): Promise<DoctorProfile[]> {
     console.log("the controller is working fine");
-    try {
       const tempDoctor = await this.doctorProfileService.getDoctorByDocId(docId);
-      if (!tempDoctor || tempDoctor.length === 0) {
-        throw new NotFoundException(`No prescriptions found for doc_id: ${docId}`);
-      }
       return tempDoctor;
-    } catch (error) {
-      console.log(error);
-      throw new Error('Error fetching prescriptions');
-    }
+     
   }
   }
 
