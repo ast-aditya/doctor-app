@@ -1,5 +1,5 @@
 import { ConflictException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { AuthRegisterDto } from './dto/auth.dto';
+import { login_Dto, register_Dto } from './dto/auth.dto';
 import * as bcrypt from 'bcrypt' 
 import { InjectModel } from '@nestjs/mongoose';
 import { AuthUserRegister, UserDocument} from './schema/auth_register.schema';
@@ -14,9 +14,9 @@ export class NauthService {
     private jwtService : JwtService,
     private UserService : UserService){}
 
-    async signupLocal(dto : AuthRegisterDto){
+    async signupLocal(dto : register_Dto){
         try {
-            const { email, password} = dto;
+            const { name, email, password, role } = dto;
             const hash = await this.hashData(password);
             const existingUser = await this.UserService.getUserbyEmail(email);
             if (existingUser) {
@@ -26,8 +26,10 @@ export class NauthService {
             const hashedPassword: string = await bcrypt.hash(password, 10);
 
             const user = await this.UserService.createUser({
+                name,
                 email,
                 password: hashedPassword,
+                role,
               });
             // const newUser = new this.UserModel({
             //     email : email,
@@ -44,7 +46,7 @@ export class NauthService {
         }
     }
     
-    async siginLocal(dto : AuthRegisterDto){
+    async siginLocal(dto : login_Dto){
         try {
             const {email, password} = dto;
             const user = await this.UserService.getUserbyEmail(email);
@@ -63,7 +65,9 @@ export class NauthService {
 
             const userData = {
                 id: user._id,
+                name: user.name,
                 email: user.email,
+                role: user.role,
               };
               return { tokens, userData };
         } catch (error) {
@@ -248,37 +252,37 @@ export class NauthService {
     // }
 
     // service for users 
-    async getUsers(query: any): Promise<any> {
-        try {
-          const doc = await this.UserModel.find({}).select(
-            '-password -refreshToken',
-          );
-          const totalCount = await this.UserModel.countDocuments();
+    // async getUsers(query: any): Promise<any> {
+    //     try {
+    //       const doc = await this.UserModel.find({}).select(
+    //         '-password -refreshToken',
+    //       );
+    //       const totalCount = await this.UserModel.countDocuments();
     
-          // Convert Mongoose document to a plain JavaScript object
-          const docObject = doc.map(doc => doc.toObject());
+    //       // Convert Mongoose document to a plain JavaScript object
+    //       const docObject = doc.map(doc => doc.toObject());
     
-          return { results: docObject.length, total: totalCount, data: docObject };
-        } catch (error) {
-          throw new InternalServerErrorException(
-            'Something went wrong while fetching users',
-          );
-        }
-    }
+    //       return { results: docObject.length, total: totalCount, data: docObject };
+    //     } catch (error) {
+    //       throw new InternalServerErrorException(
+    //         'Something went wrong while fetching users',
+    //       );
+    //     }
+    // }
     
-    async getUserbyEmail(email: string): Promise<UserDocument> {
-        try {
-          const user = await this.UserModel.findOne({ email: email });
-        //   this.logger.log(`User successfully fetched with Id : ${user.id}`)
-          return user;
-        } catch (error) {
-          console.error(
-            `Error while finding user with email ${email}: ${error.message}`,
-          );
-          throw new InternalServerErrorException(
-            'Something went wrong while finding the user',
-          );
-        }
-      }
+    // async getUserbyEmail(email: string): Promise<UserDocument> {
+    //     try {
+    //       const user = await this.UserModel.findOne({ email: email });
+    //     //   this.logger.log(`User successfully fetched with Id : ${user.id}`)
+    //       return user;
+    //     } catch (error) {
+    //       console.error(
+    //         `Error while finding user with email ${email}: ${error.message}`,
+    //       );
+    //       throw new InternalServerErrorException(
+    //         'Something went wrong while finding the user',
+    //       );
+    //     }
+    //   }
     
 }

@@ -1,9 +1,8 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, Req, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query, Req, Res, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { userRegistrationDto } from "src/auth/dto/register.dto";
 import { GetCurrentUser, GetCurrentUserId, Public } from "src/common/decorators";
 import { NauthService } from "./nauth.service";
-import { AuthRegisterDto } from "./dto/auth.dto";
+import { login_Dto, register_Dto, update_Dto } from "./dto/auth.dto";
 import { Response } from "express";
 import { RtGuard } from "src/common/guards";
 
@@ -18,11 +17,21 @@ export class UserController {
         return this.UserService.getUsers(query);
     }
 
+    @Public() 
+    @Post(':id/updateuser')
+    async updateUser(@Body() user: update_Dto, @Param('id') userId: string) {
+        return this.UserService.updateUser(user, userId);
+    }
+    @Public()
+    @Post(':id/deleteuser')
+    async deleteUser(@Param('id') userId: string) {
+        return this.UserService.deleteUser(userId);
+    }
     @Public()
     @Post('register')
     @HttpCode(HttpStatus.CREATED)
     async register(
-        @Body() UserDto: AuthRegisterDto,
+        @Body() UserDto: register_Dto,
         @Res() res: Response,
     ) {
         const tokens = await this.nauthService.signupLocal(UserDto);
@@ -32,7 +41,7 @@ export class UserController {
     @Public()
     @Post('login')
     @HttpCode(HttpStatus.OK)
-    async login(@Body() loginDTO: AuthRegisterDto, @Res() res: Response) {
+    async login(@Body() loginDTO: login_Dto, @Res() res: Response) {
         const data = await this.nauthService.siginLocal(loginDTO);
         return res.status(200).json(data);
     }

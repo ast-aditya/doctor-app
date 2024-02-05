@@ -5,6 +5,10 @@ export type UserDocument = HydratedDocument<AuthUserRegister>;
 
 @Schema({collection : 'users'})
 export class AuthUserRegister extends Document {
+
+  @Prop({type: String})
+  name : string;
+
   @Prop({required : true , unique: true})
   email: string;
 
@@ -16,9 +20,6 @@ export class AuthUserRegister extends Document {
 
   @Prop()
   hashed_rt: string;
-
-//   @Prop({required : true})
-//   role : string;
 
 //   @Prop()
 //   otp: string;

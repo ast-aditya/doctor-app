@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { NauthService } from './nauth.service';
-import { NauthController } from './nauth.controller';
+// import { NauthController } from './nauth.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthUserRegister, AuthUserRegistrationSchema } from './schema/auth_register.schema';
 import { AtStrategy, RtStrategy } from './strategies';
