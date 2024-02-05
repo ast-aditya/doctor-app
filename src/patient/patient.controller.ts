@@ -13,30 +13,30 @@ export class PatientController {
     constructor(private patientService: PatientService) { }
 
 
-    @Post('/create')
-    @ApiOperation({ summary: 'Create patient' })
-    @ApiResponse({ status: 201, description: 'The patient has been successfully created.' })
-    @ApiResponse({ status: 400, description: 'Bad Request.Username or password should not be empty.' })
-    @ApiBody({
-        schema: {
-            type: 'object',
-            properties: {
-                username: {
-                    type: 'string',
-                    example: 'testuser@gmail.com',
-                    description: 'this is a unique username'
-                },
-                password: {
-                    type: 'string',
-                    example: 'test',
-                    description: 'This contains password for the username'
-                }
-            }
-        }
-    })
-    createPatient(@Body() createPatientDto: CreatePatientUser) {
-        return this.patientService.createPatientUser(createPatientDto);
-    }
+    // @Post('/create')
+    // @ApiOperation({ summary: 'Create patient' })
+    // @ApiResponse({ status: 201, description: 'The patient has been successfully created.' })
+    // @ApiResponse({ status: 400, description: 'Bad Request.Username or password should not be empty.' })
+    // @ApiBody({
+    //     schema: {
+    //         type: 'object',
+    //         properties: {
+    //             username: {
+    //                 type: 'string',
+    //                 example: 'testuser@gmail.com',
+    //                 description: 'this is a unique username'
+    //             },
+    //             password: {
+    //                 type: 'string',
+    //                 example: 'test',
+    //                 description: 'This contains password for the username'
+    //             }
+    //         }
+    //     }
+    // })
+    // createPatient(@Body() createPatientDto: CreatePatientUser) {
+    //     return this.patientService.createPatientUser(createPatientDto);
+    // }
 
 
     @Post('profile')

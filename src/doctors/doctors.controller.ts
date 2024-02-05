@@ -13,13 +13,13 @@ export class DoctorsController {
         return this.doctorService.DoctorUserDto(createDoctorDto);
     }
 
-<<<<<<< Updated upstream
     @Get('profile')
     getProfile(@Req() req: Request) {
         // req.user is typically populated in middleware
         const username = req.user;
         return username;  
-=======
+    }
+
     @Get()
     async findAll(): Promise<DoctorUser[]> {
       const doctors = await this.doctorService.findAll();
@@ -29,7 +29,6 @@ export class DoctorsController {
         password: doctor.password
         
       }));
->>>>>>> Stashed changes
     }
 
     @Put('profile')
