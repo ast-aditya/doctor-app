@@ -36,4 +36,9 @@ export class DoctorsService {
     }
   }
 
+  async delete(docId: string): Promise<boolean> {
+    const result = await this.doctorProfileModel.deleteOne({ _id: docId });
+    return result.deletedCount > 0;
+  }
+
 }

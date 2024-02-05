@@ -21,7 +21,7 @@ export class Billing extends Document {
   @Prop({ required: true })
   transactionStatus: string;
 
-  @Prop({ default: false })
+  @Prop({ default: false }) 
   isVerified: boolean;
 
   @Prop({ required: true })

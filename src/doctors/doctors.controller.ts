@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, NotFoundException } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, NotFoundException,Delete } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
 import { DoctorProfile } from "./schemas/doctorsProfile.schema"
 import { ApiOperation, ApiResponse, ApiCreatedResponse } from '@nestjs/swagger';
@@ -33,6 +33,14 @@ export class DoctorsController {
       const tempDoctor = await this.doctorProfileService.getDoctorByDocId(docId);
       return tempDoctor;
      
+  }
+
+  @Delete('delete/:doc_id')
+  async delete(@Param('doc_id') docId: string): Promise<void> {
+      const deleted = await this.doctorProfileService.delete(docId);
+      if (!deleted) {
+          throw new NotFoundException(`Prescription with ID "${docId}" not found`);
+      }
   }
 }
 

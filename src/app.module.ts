@@ -12,9 +12,11 @@ import { PrescrModule } from './prescr/prescr.module';
 import { NauthModule } from './nauth/nauth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './common/guards';
+import { ClinicModule } from './clinic/clinic.module';
+import { SpecializationModule } from './specialization/specialization.module';
 
 @Module({
-  imports: [MongooseModule.forRoot('mongodb+srv://shadowmonarch712:testuser@cluster0.mzexokf.mongodb.net/'), AuthModule, PatientModule, DoctorsModule, PrescrModule, AppointmentsModule, MailerModule.forRoot({
+  imports: [MongooseModule.forRoot('mongodb+srv://shadowmonarch712:testuser@cluster0.mzexokf.mongodb.net/'), AuthModule, PatientModule, DoctorsModule, PrescrModule,ClinicModule, AppointmentsModule, MailerModule.forRoot({
     transport: {
       host: 'smtp.gmail.com',
       auth: {
@@ -22,7 +24,7 @@ import { AtGuard } from './common/guards';
         pass: 'rgwovfbhzznbinbi'
       }
     }
-  }), BillingModule, NauthModule],
+  }), BillingModule, NauthModule, ClinicModule, SpecializationModule],
   controllers: [AppController],
   providers: [AppService,
     {
