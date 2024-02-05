@@ -17,9 +17,9 @@ export class prescrController {
     type: prescrSchema
      })
   
-   async create(@Body() prescriptionDTO: PrescriptionDTO): Promise<any> {
-      return this.prescriptionService.create(prescriptionDTO);
-  }
+    async create(@Body() prescriptionDTO: PrescriptionDTO): Promise<any> {
+        return this.prescriptionService.create(prescriptionDTO);
+    }
 
   
   @Get(':doc_id')

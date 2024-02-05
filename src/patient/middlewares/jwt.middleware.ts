@@ -1,4 +1,4 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { ForbiddenException, Injectable, NestMiddleware } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response, NextFunction } from 'express';
 
@@ -18,6 +18,9 @@ export class JwtMiddleware implements NestMiddleware {
                     id: decoded._doc._id,
                     username: decoded._doc.username
                 };
+                if(!req.user){
+                    throw new ForbiddenException("Not authorized");
+                } 
             } catch (err) {
                 console.log('Invalid token');
             }
