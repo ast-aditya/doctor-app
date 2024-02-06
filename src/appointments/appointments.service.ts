@@ -1,25 +1,44 @@
 // appointment.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Appointment } from './schemas/appointment.schema';
 import { CreateAppointmentDto } from './dto/appointment.dto';
+import { UserService } from 'src/nauth/user.service';
 
 @Injectable()
 export class AppointmentsService {
-  constructor(@InjectModel(Appointment.name) private appointmentModel: Model<Appointment>) {}
+  constructor(@InjectModel(Appointment.name) private appointmentModel: Model<Appointment>,
+  private UserService : UserService) {}
 
-  async createAppointment(doctorID: string, user: any, createAppointmentDto: CreateAppointmentDto) {
-    const { date, time } = createAppointmentDto;
-    const patientID = user.id;
-    console.log(patientID);
-    return await this.appointmentModel.findOneAndUpdate(
-      { doctorID, patientID, date, time },  
-      { ...createAppointmentDto, doctorID, patientID },
-      { upsert: true, new: true }
-    );
+  async createAppointment(doctorID: string, patient_Id: string, createAppointmentDto: CreateAppointmentDto) {
+    try {
+        const { date, time } = createAppointmentDto;
+        const doctor = await this.UserService.getUserbyId(doctorID);
+        if(!doctor){
+          throw new NotFoundException('Doctor not found');
+        }
+        const patient = await this.UserService.getUserbyId(patient_Id);
+        if(!patient){
+          throw new NotFoundException('Patient not found');
+        }
+        const newAppointment = {
+          doctorID: doctorID,
+          patient_Id: patient_Id,
+          date: date,
+          time: time
+        };
+        return await this.appointmentModel.findOneAndUpdate(
+          { doctorID, patient_Id, date, time },  
+          { ...createAppointmentDto, doctorID, patient_Id },
+          { upsert: true, new: true }
+        );
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error while creating appointment ${error.message}`,
+      );
+    }
   }
-
   async getAllAppointments(){
     return await this.appointmentModel.find();
   }

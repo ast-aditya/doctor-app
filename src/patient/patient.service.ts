@@ -55,7 +55,6 @@ export class PatientService {
 async updatePatientProfile(updatePatientProfile: updatePatientProfile, user_Id : string) {
   try {
       const {age, gender, dob, address, contact} = updatePatientProfile;
-      console.log("first")
       const existProfile = await this.getPatientProfile(user_Id);
       if(!existProfile){
         throw new NotFoundException('User Profile do not exists');
@@ -65,9 +64,6 @@ async updatePatientProfile(updatePatientProfile: updatePatientProfile, user_Id :
       if(!user){
         throw new NotFoundException('User not found');
     }
-    console.log(dob)
-    console.log(gender)
-    console.log(age)
 
       const updatedProfile = {
         user_Id: user_Id,

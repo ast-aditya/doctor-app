@@ -26,9 +26,6 @@ export class Address {
 export class clinicSchema extends Document {
 
 @Prop()
-clinic_id: string;
-
-@Prop()
 Clinic_name: string;
 
 @Prop({ type: AddressSchema, required: true })
