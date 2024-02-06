@@ -3,9 +3,9 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class specialDTO {
 
-    @ApiProperty()
-    @IsString() 
-    specialization_id: string;
+    // @ApiProperty()
+    // @IsString() 
+    // specialization_id: string;
 
     @ApiProperty()
     @IsString()  
@@ -15,9 +15,7 @@ export class specialDTO {
     @IsString()  
     LevelOfDifficulty: string;
 
-    
-
     @ApiProperty()
-    @IsString()
+    // @IsString()
     doc_id:string[];
   }

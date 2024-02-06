@@ -3,16 +3,18 @@ import { AuthUserRegister, UserDocument } from "./schema/auth_register.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { update_Dto } from "./dto/auth.dto";
+import { ConfigService } from "@nestjs/config";
 
 export class UserService {
-  constructor(@InjectModel(AuthUserRegister.name) private UserModel: Model<AuthUserRegister>,) { }
+  constructor(@InjectModel(AuthUserRegister.name) private UserModel: Model<AuthUserRegister>,
+  private configService : ConfigService) { }
   async getUsers(query: any): Promise<any> {
     try {
       const doc = await this.UserModel.find({}).select(
         '-password -refreshToken',
       );
       const totalCount = await this.UserModel.countDocuments();
-
+        console.log(this.configService.get('PORT'))
       // Convert Mongoose document to a plain JavaScript object
       const docObject = doc.map(doc => doc.toObject());
 

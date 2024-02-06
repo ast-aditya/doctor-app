@@ -3,30 +3,32 @@ import { SpecializationSchema, specializationSchema } from './schema/specializat
 import { specialDTO } from './dtos/specialization.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { SearchService } from './search.service';
 
 
 
 @Injectable()
 export class SpecializationService {
-    constructor(@InjectModel(SpecializationSchema.name) private specialModel: Model<specializationSchema>) {}
+    constructor(@InjectModel(SpecializationSchema.name) private specialModel: Model<specializationSchema>,
+    private readonly searchService : SearchService) {}
     
     
     async create(SpecialDTO: specialDTO): Promise<any> {
-    const { specialization_id,specialization_name, LevelOfDifficulty, doc_id } = SpecialDTO;
+    const { specialization_name, LevelOfDifficulty, doc_id } = SpecialDTO;
     try {
-      const existingSpecial = await this.specialModel.findOne({ specialization_id });
-      if (existingSpecial) {
-        throw new ConflictException('Specialization with the same name already exists');
-      }
+      // const existingSpecial = await this.specialModel.findOne({ specialization_id });
+      // if (existingSpecial) {
+      //   throw new ConflictException('Specialization with the same name already exists');
+      // }
       const newSpecial = new this.specialModel({
-        specialization_id,
         specialization_name,
         LevelOfDifficulty,
         doc_id
       });
-      const special = await newSpecial.save();
-
-      console.log(`Specialization created successfully with Id : ${specialization_id}`);
+      const special = await newSpecial.save(); 
+      // this.searchService.indexSpecialization(special)
+      this.searchService.indexSpecialization({ specialization_name, LevelOfDifficulty, doc_id });
+      console.log(`Specialization created successfully with Id : ${newSpecial.id}`);
 
       return special;
     } catch (error) {
@@ -41,8 +43,9 @@ export class SpecializationService {
         `Error while creating Specialization ${error.message}`,
       );
     }
-
-
+  }
+  public async search(text: string){
+    return await this.searchService.search(text);
   }
 
   async getSpecialById(specialization_id: string){
@@ -92,7 +95,7 @@ export class SpecializationService {
 
   async update(specialization_id: string, specialDTO: specialDTO){
     try {
-      const { specialization_id,specialization_name, LevelOfDifficulty, doc_id } = specialDTO;
+      const { specialization_name, LevelOfDifficulty, doc_id } = specialDTO;
       const existingSpecial = await this.getSpecialById(specialization_id);
       console.log(existingSpecial)
       if (!existingSpecial) {

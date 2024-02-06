@@ -7,9 +7,6 @@ export type specializationSchema = HydratedDocument<SpecializationSchema>
 export class SpecializationSchema extends Document {
   
   @Prop()
-  specialization_id: String;
-  
-  @Prop()
   specialization_name: string;
 
   @Prop()

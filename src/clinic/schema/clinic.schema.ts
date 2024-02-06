@@ -43,6 +43,14 @@ opening_time: string;
 @Prop()
 closing_time: string;
 
+@Prop()
+email : string;
+
+@Prop()
+contact_Number : number;
+
+@Prop()
+country_Code : string;
 
 }
 
