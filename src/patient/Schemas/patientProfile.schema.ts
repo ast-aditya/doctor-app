@@ -35,9 +35,6 @@ export class PatientProfile extends Document {
 
   @Prop()
   role : string;
-  
-  @Prop({ required: true })
-  age: number;
 
   @Prop({ required: true })
   gender: string;
@@ -45,8 +42,21 @@ export class PatientProfile extends Document {
   @Prop({ required: true })
   dob: Date;
 
+  @Prop()
+  Idenfication : string;
+
+  @Prop()
+  Idenfication_value : string;
+
+  @Prop()
+  blood_grp : string;
+
+
   @Prop({ type: AddressSchema, required: true }) // use the Address schema
   address: Address;
+
+  @Prop({ required: true })
+  country_code: string;
 
   @Prop({ required: true })
   contact: number;
