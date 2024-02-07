@@ -1,4 +1,4 @@
-import { IsString, IsArray, ValidateNested, IsInt } from 'class-validator';
+import { IsString, IsArray, ValidateNested, IsInt, IsEmail } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 class AddressDTO {
@@ -19,8 +19,12 @@ class AddressDTO {
     state: string;
 
     @ApiProperty()
-    @IsInt()
+    @IsString()
     pincode: number;
+
+    @ApiProperty()
+    @IsString()
+    country: string;
 }
 
 export class ClinicDTO {
@@ -47,8 +51,20 @@ export class ClinicDTO {
     @IsString()
     opening_time: string;
 
-
     @ApiProperty()
     @IsString()
     closing_time: string;
+
+    @ApiProperty()
+    @IsEmail()
+    email: string;
+    
+    @ApiProperty()
+    @IsString()
+    country_Code : string;
+
+    @ApiProperty()
+    @IsInt()
+    contact_Number: number;
+
 }

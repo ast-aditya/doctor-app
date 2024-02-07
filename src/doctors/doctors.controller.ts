@@ -4,6 +4,7 @@ import { DoctorProfile } from "./schemas/doctorsProfile.schema"
 import { ApiOperation, ApiResponse, ApiCreatedResponse } from '@nestjs/swagger';
 import { DoctorPrfDto } from './dto/doctorPrf.dto';
 import { prescrSchema } from 'src/prescr/schemas/prescr.schema';
+import { GetCurrentUserId } from 'src/common/decorators';
 
 @Controller('doctors')
 export class DoctorsController {

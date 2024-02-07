@@ -16,7 +16,10 @@ export class Address {
   state: string;
 
   @Prop({ required: true })
-  pincode: number;
+  pincode: string;
+
+  @Prop()
+  country: string;
 }
 
 export const AddressSchema = SchemaFactory.createForClass(Address);
@@ -33,9 +36,6 @@ export class PatientProfile extends Document {
   @Prop()
   email : string;
 
-  @Prop()
-  role : string;
-
   @Prop({ required: true })
   gender: string;
 
@@ -43,20 +43,19 @@ export class PatientProfile extends Document {
   dob: Date;
 
   @Prop()
-  Idenfication : string;
+  identification_Type : string;
 
   @Prop()
-  Idenfication_value : string;
+  identification_Value : string;
 
-  @Prop()
-  blood_grp : string;
-
+  @Prop({required:true})
+  blood_Group : string;
 
   @Prop({ type: AddressSchema, required: true }) // use the Address schema
   address: Address;
 
   @Prop({ required: true })
-  country_code: string;
+  country_Code: string;
 
   @Prop({ required: true })
   contact: number;

@@ -9,11 +9,10 @@ export class Address {
   @IsString()
   readonly line1?: string;
 
- @ApiProperty({
+  @ApiProperty({
     description: 'line 2 of the address',
     example: 'def-456'
   })
-  
   @IsString()
   @IsOptional()
   readonly line2?: string;
@@ -22,7 +21,6 @@ export class Address {
     description: 'city of the patient',
     example: 'Noida'
   })
-
   @IsString()
   readonly city?: string;
 
@@ -33,9 +31,19 @@ export class Address {
   @IsString()
   readonly state?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'pincode of the patient',
+    example: '201304'
+  })
   @IsInt()
-  readonly pincode?: number;
+  readonly pincode?: string;
+
+  @ApiProperty({
+    description: 'country of the patient',
+    example: 'India'
+  })
+  @IsString()
+  readonly country?: string;
 }
 
 export class updatePatientProfile {
@@ -44,22 +52,37 @@ export class updatePatientProfile {
     description: 'age of the patient',
     example: 18
   })
-  // @IsInt()
+  @IsInt()
   readonly age?: number;
 
   @ApiProperty({
     description: 'gender of the patient',
     example: 'male'
   })
-  // @IsString()
+  @IsString()
   readonly gender?: string;
 
   @ApiProperty({
     description: 'date of birth of the patient',
     example: '07-12-2002'
   })
-  // @IsDate()
+  @IsDate()
   readonly dob?: Date;
+
+  @ApiProperty({
+    description: 'Identification type of the patient',
+  })
+  readonly identification_Type?: string;
+
+  @ApiProperty({
+    description: 'Identification value of the patient',
+  })
+  readonly identification_Value?: string;
+
+  @ApiProperty({
+    description: 'blood group of the patient',
+  })
+  readonly blood_Group?: string;
 
   @ApiProperty({
     description: 'address of the patient',
@@ -67,9 +90,14 @@ export class updatePatientProfile {
   readonly address?: Address;
 
   @ApiProperty({
+    description: 'Contact country code of the patient',
+  })
+  readonly country_Code?: string;
+
+  @ApiProperty({
     description: 'contact number of the patient',
     example: '1234567890'
   })
-  // @IsInt()
+  @IsInt()
   readonly contact?: number;
 }

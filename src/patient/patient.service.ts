@@ -16,28 +16,34 @@ export class PatientService {
   // to create profile for logged in user
   async createPatientProfile(createPatientProfile: createPatientProfile, user_Id : string) {
     try {
-        const {age, gender, dob, address, contact} = createPatientProfile;
+        const {age, gender, dob, identification_Type, identification_Value, blood_Group, address, country_Code, contact} = createPatientProfile;
         const user = await this.UserService.getUserbyId(user_Id);
-        if(!user){
-          throw new NotFoundException('User not found');
-      }
 
-      // const existProfile = await this.getPatientProfile(user_Id);
-      // console.log(existProfile)
-      // if(existProfile){
-      //   console.log("inside error")
-      //   throw new ConflictException('User Profile already exists');
-      // }
-      
+        const existing_Profile = await this.getProfileByID(user_Id)
+        if(existing_Profile){
+          throw new ConflictException('User Profile already exists')
+        }
+        console.log(identification_Type)
+        console.log(identification_Value)
         const newProfile = new this.patientProfileModel({
           user_Id: user_Id,
           name: user.name,
-          email: user.email,
-          role: user.role,
+          email: user.email, 
           age: age,
           gender: gender,
           dob: dob,
-          address: address,
+          identification_Type: identification_Type,
+          identification_Value: identification_Value,
+          blood_Group: blood_Group,
+          address: {
+            line1: address.line1,
+            line2: address.line2,
+            city: address.city,
+            state: address.state,
+            pincode: address.pincode,
+            country: address.country
+          },
+          country_Code: country_Code,
           contact: contact
         });
 
@@ -49,12 +55,13 @@ export class PatientService {
         `Error while creating profile ${error.message}`,
     );
     }
-}
+} 
+
 
 
 async updatePatientProfile(updatePatientProfile: updatePatientProfile, user_Id : string) {
   try {
-      const {age, gender, dob, address, contact} = updatePatientProfile;
+      const {age, gender, dob, identification_Type, identification_Value, blood_Group, address, country_Code, contact} = updatePatientProfile;
       const existProfile = await this.getPatientProfile(user_Id);
       if(!existProfile){
         throw new NotFoundException('User Profile do not exists');
@@ -69,11 +76,21 @@ async updatePatientProfile(updatePatientProfile: updatePatientProfile, user_Id :
         user_Id: user_Id,
         name: user.name,
         email: user.email,
-        role: user.role,
         age: age,
         gender: gender,
         dob: dob,
-        address: address,
+        identification_Type: identification_Type,
+        identification_Value: identification_Value,
+        blood_Group: blood_Group,
+        address: {
+          line1: address.line1,
+          line2: address.line2,
+          city: address.city,
+          state: address.state,
+          pincode: address.pincode,
+          country: address.country
+        },
+        country_Code: country_Code,
         contact: contact
       };
 
@@ -84,6 +101,7 @@ async updatePatientProfile(updatePatientProfile: updatePatientProfile, user_Id :
   );
   }
 }
+
 
 
 

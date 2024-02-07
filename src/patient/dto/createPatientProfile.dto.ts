@@ -33,16 +33,24 @@ export class Address {
   @IsString()
   readonly state: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'pincode of the patient',
+    example: '201304'
+  })
   @IsInt()
-  readonly pincode: number;
+  readonly pincode: string;
+
+  @ApiProperty({
+    description: 'country of the patient',
+    example: 'India'
+  })
+  @IsInt()
+  readonly country: string;
 }
 
 export class createPatientProfile {
 
   readonly user_id : string;
-
-
   @ApiProperty({
     description: 'age of the patient',
     example: 18
@@ -61,13 +69,32 @@ export class createPatientProfile {
     description: 'date of birth of the patient',
     example: '07-12-2002'
   })
-  // @IsDate()
   readonly dob: Date;
+
+  @ApiProperty({
+    description: 'Identification type of the patient',
+  })
+  readonly identification_Type: string;
+
+  @ApiProperty({
+    description: 'Identification value of the patient',
+  })
+  readonly identification_Value: string;
+
+  @ApiProperty({
+    description: 'blood group of the patient',
+  })
+  readonly blood_Group: string;
 
   @ApiProperty({
     description: 'address of the patient',
   })
   readonly address: Address;
+
+  @ApiProperty({
+    description: 'Contact country code of the patient',
+  })
+  readonly country_Code: string;
 
   @ApiProperty({
     description: 'contact number of the patient',

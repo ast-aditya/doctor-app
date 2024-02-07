@@ -16,7 +16,12 @@ export class Address {
     state: string;
   
     @Prop({ required: true })
-    pincode: number;
+    pincode: string;
+
+    @Prop({ required: true })
+    country: string;
+
+
   }
   
   export const AddressSchema = SchemaFactory.createForClass(Address);

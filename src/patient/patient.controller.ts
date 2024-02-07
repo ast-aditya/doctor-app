@@ -1,7 +1,6 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Put, Query, Req, Res } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PatientService } from './patient.service';
-import { Request } from 'express';
 import { createPatientProfile } from './dto/createPatientProfile.dto';
 import { GetCurrentUserId, Public } from 'src/common/decorators';
 import { Response } from "express";
@@ -41,6 +40,7 @@ export class PatientController {
         const data = this.patientService.getPatientProfile(user_Id);
         return res.status(200).json(data)
     }
+
     @Public()
     @ApiOperation({ summary: 'get patient profile by id' })
     @Get(':patientID/getProfile')
@@ -58,13 +58,13 @@ export class PatientController {
     return res.status(200).json({ msg: 'deleted' })
 }
 
-@ApiOperation({ summary: 'delete patient profile by id' })
-@Get(':patientID/deleteProfile')
-@HttpCode(HttpStatus.OK)
-async deletePatientProfileByID(@Param('patientID') patientID : string, @Res() res: Response,) {
-    await this.patientService.deleteProfileByID(patientID);
-    return res.status(200).json({ msg: 'deleted' })
-    
-  }
+    @ApiOperation({ summary: 'delete patient profile by id' })
+    @Get(':patientID/deleteProfile')
+    @HttpCode(HttpStatus.OK)
+    async deletePatientProfileByID(@Param('patientID') patientID : string, @Res() res: Response,) {
+        await this.patientService.deleteProfileByID(patientID);
+        return res.status(200).json({ msg: 'deleted' })
+        
+    }
 
 }

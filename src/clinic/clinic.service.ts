@@ -10,7 +10,7 @@ export class ClinicService {
 
 
     async create(clinicDto: ClinicDTO): Promise<any> {
-      const { Clinic_name, Address, DoctorIDs, open_days, opening_time, closing_time } = clinicDto;
+      const { Clinic_name, Address, DoctorIDs, open_days, opening_time, closing_time, email, country_Code, contact_Number } = clinicDto;
       try {
         const existingClinic = await this.clinicModel.findOne({ Clinic_name });
         if (existingClinic) {
@@ -22,12 +22,15 @@ export class ClinicService {
           DoctorIDs,
           open_days,
           opening_time,
-          closing_time
+          closing_time,
+          email,
+          country_Code,
+          contact_Number
         });
         const clinic = await newClinic.save();
-  
+    
         console.log(`Clinic created successfully with Id : ${clinic.id}`);
-  
+    
         return clinic;
       } catch (error) {
         if (
@@ -41,8 +44,7 @@ export class ClinicService {
           `Error while creating clinic ${error.message}`,
         );
       }
-    }
-
+    } 
     async getClinicById(clinicId: string){
       try {
         const clinic = await this.clinicModel.findById(clinicId);
@@ -88,7 +90,7 @@ export class ClinicService {
     }
     async update(clinicId: string, clinicDto: ClinicDTO){
       try {
-        const { Clinic_name, Address, DoctorIDs, open_days, opening_time, closing_time } = clinicDto;
+        const { Clinic_name, Address, DoctorIDs, open_days, opening_time, closing_time, email, country_Code, contact_Number } = clinicDto;
         const existingClinic = await this.getClinicById(clinicId);
         console.log(existingClinic)
         if (!existingClinic) {
@@ -100,7 +102,10 @@ export class ClinicService {
           DoctorIDs,
           open_days,
           opening_time,
-          closing_time
+          closing_time,
+          email,
+          country_Code,
+          contact_Number
         };
         const clinic =  await this.clinicModel.updateOne({ _id: clinicId }, { $set: updatedClinic }, { upsert: true });
         return {clinic, updatedClinic};
@@ -117,6 +122,7 @@ export class ClinicService {
         );
       }
     }
+    
     async getClinicsByDoctor(doctorId: string) {
       try {
         const clinics = await this.clinicModel.find({ DoctorIDs: doctorId });
