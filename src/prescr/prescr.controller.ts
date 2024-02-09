@@ -31,7 +31,7 @@ export class prescrController {
       return prescriptions;
   }
   @Public()
-  @Put(':doc_id')
+  @Post(':doc_id')
   update(@Param('doc_id') docId: string, @Body() prescription: PrescriptionDTO): Promise<PrescriptionDTO> {
       return this.prescriptionService.update(docId, prescription);
   }
