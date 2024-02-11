@@ -1,10 +1,11 @@
-import { Controller, Post, Body, Get, Param, NotFoundException,Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, NotFoundException,Delete, Res } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
 import { DoctorProfile } from "./schemas/doctorsProfile.schema"
 import { ApiOperation, ApiResponse, ApiCreatedResponse } from '@nestjs/swagger';
 import { DoctorPrfDto } from './dto/doctorPrf.dto';
 import { prescrSchema } from 'src/prescr/schemas/prescr.schema';
 import { GetCurrentUserId } from 'src/common/decorators';
+import { Response } from 'express';
 
 @Controller('doctors')
 export class DoctorsController {
@@ -19,8 +20,8 @@ export class DoctorsController {
     type: DoctorPrfDto
      })
   
-   async createDoctor(@Body() DoctorDTO: DoctorPrfDto): Promise<any> {
-      return this.doctorProfileService.create(DoctorDTO);
+   async createDoctor(@Body() create_Doctor_DTO: DoctorPrfDto,  @GetCurrentUserId() user_Id : string,@Res() res: Response): Promise<any> {
+      return this.doctorProfileService.create(create_Doctor_DTO, user_Id);
   }
 
   @Get()

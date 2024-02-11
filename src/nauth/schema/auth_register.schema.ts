@@ -12,20 +12,14 @@ export class AuthUserRegister extends Document {
   @Prop({required : true , unique: true})
   email: string;
 
-  @Prop({required : true})
+  @Prop()
   password: string;
 
-  @Prop({type: String })
+  @Prop()
   role: string;
 
   @Prop()
   hashed_rt: string;
-
-//   @Prop()
-//   otp: string;
-
-//   @Prop({default : false})
-//   isVerified: boolean;
 }
 
 export const AuthUserRegistrationSchema = SchemaFactory.createForClass(AuthUserRegister);

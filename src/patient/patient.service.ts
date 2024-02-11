@@ -23,8 +23,6 @@ export class PatientService {
         if(existing_Profile){
           throw new ConflictException('User Profile already exists')
         }
-        console.log(identification_Type)
-        console.log(identification_Value)
         const newProfile = new this.patientProfileModel({
           user_Id: user_Id,
           name: user.name,

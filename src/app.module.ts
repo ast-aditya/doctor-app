@@ -14,12 +14,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './common/guards';
 import { ClinicModule } from './clinic/clinic.module';
 import { SpecializationModule } from './specialization/specialization.module';
-<<<<<<< Updated upstream
 import { ConfigModule } from '@nestjs/config';
 import { SearchModule } from './specialization/search.module';
-=======
-import { ConfigModule } from '@nestjs/config'; 
->>>>>>> Stashed changes
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -37,12 +33,7 @@ import { ConfigModule } from '@nestjs/config';
         pass: 'rgwovfbhzznbinbi'
       }
     }
-  }), 
-  ConfigModule.forRoot({
-     envFilePath: `${process.env.NODE_ENV}.env` 
-    }),
-    BillingModule, NauthModule, ClinicModule, SpecializationModule],
-  
+  }), BillingModule, NauthModule, ClinicModule, SpecializationModule],
   controllers: [AppController],
   providers: [AppService,
     {

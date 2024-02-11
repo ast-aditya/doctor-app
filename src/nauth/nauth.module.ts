@@ -7,6 +7,7 @@ import { AtStrategy, RtStrategy } from './strategies';
 import { JwtModule } from '@nestjs/jwt';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   imports:[
@@ -15,7 +16,7 @@ import { UserService } from './user.service';
     ]),
     JwtModule.register({}),
   ],
-  providers: [NauthService, AtStrategy, RtStrategy, UserService],
+  providers: [NauthService, AtStrategy, RtStrategy, UserService, GoogleStrategy],
   controllers: [UserController]
 })
 export class NauthModule {}

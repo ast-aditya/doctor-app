@@ -3,17 +3,67 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { DoctorProfile } from './schemas/doctorsProfile.schema';
 import { DoctorPrfDto } from './dto/doctorPrf.dto';
+import { UserService } from 'src/nauth/user.service';
 @Injectable()
 export class DoctorsService {
   constructor(
     @InjectModel(DoctorProfile.name) private doctorProfileModel: Model<DoctorProfile>,
+    private UserService : UserService
   ) {}
 
-  async create(DoctorDTO: DoctorPrfDto): Promise<DoctorPrfDto> {
-    const createdPrescription = new this.doctorProfileModel(DoctorDTO);
-    return createdPrescription.save();
+  // async create(DoctorDTO: DoctorPrfDto): Promise<DoctorPrfDto> {
+  //   const createdPrescription = new this.doctorProfileModel(DoctorDTO);
+  //   return createdPrescription.save();
+  // }
+  async create(create_Doctor_DTO: DoctorPrfDto, user_Id : string): Promise<DoctorPrfDto> {
+    try {
+      const {gender, dob, specialization, address, education, experience, country_Code, contact } = create_Doctor_DTO;
+      const user = await this.UserService.getUserbyId(user_Id);
+      
+        const createdPrescription = new this.doctorProfileModel(create_Doctor_DTO);
+        // const doctor_Profile = await createdPrescription.save();
+        // return doctor_Profile;
+      const newProfile = new this.doctorProfileModel({
+        user_Id: user_Id,
+        name: user.name,
+        email: user.email, 
+        gender: gender,
+        dob: dob,
+        specialization: specialization,
+        address: {
+          line1: address.line1,
+          line2: address.line2,
+          city: address.city,
+          state: address.state,
+          pincode: address.pincode,
+          country: address.country
+        },
+        education: education.map(edu => ({
+          degree: edu.degree,
+          university: edu.university,
+          year: edu.year
+        })),
+        experience: experience.map(exp => ({
+          designation: exp.designation,
+          organization: exp.organization,
+          start_Year: exp.start_Year,
+          end_Year: exp.end_Year
+        })),
+        country_Code: country_Code,
+        contact: contact
+      });
+  
+      const doctor_Profile = await newProfile.save();
+      console.log(`Doctor Profile created successfully with Id : ${doctor_Profile.id}`);
+      return doctor_Profile;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error while creating profile ${error.message}`,
+      );
+    }
   }
-
+  
+  
   async findAllProfiles(): Promise<DoctorProfile[]> {
     try {
       return await this.doctorProfileModel.find().exec();
