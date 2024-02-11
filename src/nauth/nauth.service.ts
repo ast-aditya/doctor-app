@@ -24,8 +24,6 @@ export class NauthService {
 
     
     async googleLogin(req: any) {
-      // const token = req.user.accessToken
-      // const token = req.user.accessToken
       const user = req.user;
       const existingUser = await this.UserService.getUserbyEmail(user.email)
       console.log(existingUser)
@@ -33,24 +31,50 @@ export class NauthService {
         throw new ConflictException("Customer with email '" + user.email + "' already exists")
       } 
 
-      const newUser = await this.UserService.createUser({
-        name: user.name,
-        email: user.email,
-        password: '',
-      });
-      const userId = newUser.id;
 
-      const tokens = await this.getTokens(
-        userId,
-        user.email,
-      );
+      if(existingUser){
 
-      await this.updateRtHash(
-        userId,
-        tokens.refresh_token,
-      );
+        const updatedUser: any = await this.UserService.updateUser({
+          name : existingUser.name,
+          email : existingUser.email,
+          password: ''
+        }  , existingUser.id);
+  
+        if (updatedUser) {
+          const tokens = await this.getTokens(
+            updatedUser.id,
+            updatedUser.email,
+          );
+  
+          const newUser = await this.updateRtHash(
+            updatedUser.id,
+            tokens.refresh_token,
+          );
 
-      return { tokens, profile: newUser };
+          return { tokens, profile: existingUser };
+      }else{
+        const newUser = await this.UserService.createUser({
+          name: user.name,
+          email: user.email,
+          password: '',
+        });
+        const userId = newUser.id;
+  
+        const tokens = await this.getTokens(
+          userId,
+          user.email,
+        );
+  
+        await this.updateRtHash(
+          userId,
+          tokens.refresh_token,
+        );
+  
+        return { tokens, profile: newUser };
+      }
+    }
+
+      
   }
     async validateUser(user: any){
         console.log(user)
