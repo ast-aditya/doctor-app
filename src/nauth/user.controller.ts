@@ -1,17 +1,21 @@
-import { Body, Controller, Get, Headers, HttpCode, HttpStatus, Param, Post, Query, Req, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query, Req, Res, UseGuards,Headers, UseInterceptors } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { GetCurrentUser, GetCurrentUserId, Public } from "src/common/decorators";
 import { NauthService } from "./nauth.service";
 import { login_Dto, register_Dto, update_Dto } from "./dto/auth.dto";
 import { Response } from "express";
 import { RtGuard } from "src/common/guards";
-import { AuthGuard } from "@nestjs/passport";
+import { RefreshTokenInterceptor } from "./nauth.interceptor";
+import { ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 
 @Controller('users')
 export class UserController {
     constructor(private UserService: UserService,
         private nauthService : NauthService) { }
-        
+    
+
+
+
     @Public()
     @Get()
     getUsers(@Query() query: any) {
@@ -28,6 +32,7 @@ export class UserController {
     async deleteUser(@Param('id') userId: string) {
         return this.UserService.deleteUser(userId);
     }
+
     @Public()
     @Post('register')
     @HttpCode(HttpStatus.CREATED)
@@ -46,7 +51,8 @@ export class UserController {
         const data = await this.nauthService.siginLocal(loginDTO);
         return res.status(200).json(data);
     }
-
+    
+    @UseInterceptors(RefreshTokenInterceptor)
     @Public()
     @UseGuards(RtGuard)
     @HttpCode(HttpStatus.OK)
@@ -64,18 +70,4 @@ export class UserController {
       await this.nauthService.logout(user_Id);
       return res.status(200).json({ msg: 'logged out' });
     }
-    @Public()
-    @Get('google/login')
-    @UseGuards(AuthGuard('google'))
-    async google_Login(){
-       
-    }   
-    
-    @Public()
-    @Get('google/callback')
-    @UseGuards(AuthGuard('google'))
-    google_redirect(@Req() req,){
-        return this.nauthService.googleLogin(req);
-    }  
-
 }

@@ -14,18 +14,10 @@ import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './common/guards';
 import { ClinicModule } from './clinic/clinic.module';
 import { SpecializationModule } from './specialization/specialization.module';
-import { ConfigModule } from '@nestjs/config';
-import { SearchModule } from './specialization/search.module';
+import { ConfigModule } from '@nestjs/config'; 
 
 @Module({
-  imports: [ConfigModule.forRoot({
-    envFilePath: '.env', 
-      isGlobal: true,
-  }),
-    MongooseModule.forRoot('mongodb+srv://shadowmonarch712:testuser@cluster0.mzexokf.mongodb.net/'),
-     AuthModule, PatientModule, DoctorsModule, PrescrModule,ClinicModule, AppointmentsModule, 
-     SearchModule,
-     MailerModule.forRoot({
+  imports: [MongooseModule.forRoot(process.env.MONGO_URI), AuthModule, PatientModule, DoctorsModule, PrescrModule,ClinicModule, AppointmentsModule, MailerModule.forRoot({
     transport: {
       host: 'smtp.gmail.com',
       auth: {
@@ -33,7 +25,12 @@ import { SearchModule } from './specialization/search.module';
         pass: 'rgwovfbhzznbinbi'
       }
     }
-  }), BillingModule, NauthModule, ClinicModule, SpecializationModule],
+  }), 
+  ConfigModule.forRoot({
+     envFilePath: `${process.env.NODE_ENV}.env` 
+    }),
+    BillingModule, NauthModule, ClinicModule, SpecializationModule],
+  
   controllers: [AppController],
   providers: [AppService,
     {

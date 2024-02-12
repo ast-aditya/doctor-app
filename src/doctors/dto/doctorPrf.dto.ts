@@ -1,169 +1,124 @@
+// doctorprf.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsEmail, IsArray, IsObject, IsNumber, ArrayMinSize } from 'class-validator';
+import { IsString, IsEmail, IsArray, IsObject, IsNumber, ArrayMinSize, IsInt, IsOptional, IsBoolean } from 'class-validator';
 
-class Address {
-  @ApiProperty()
+export class Doc_address{
+  @ApiProperty({
+    description: 'line 1 of the address',
+    example: 'abc-123'
+  })
   @IsString()
-  line1: string;
+  readonly line1: string;
 
-  @ApiProperty()
+ @ApiProperty({
+    description: 'line 2 of the address',
+    example: 'def-456'
+  })
+  
   @IsString()
-  line2?: string;
+  @IsOptional()
+  readonly line2?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'city of the doctor',
+    example: 'Noida'
+  })
+
   @IsString()
-  city: string;
+  readonly city: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'state of the doctor',
+    example: 'Uttar Pradesh'
+  })
   @IsString()
-  state: string;
+  readonly state: string;
 
-  @ApiProperty()
-  @IsNumber()
-  pincode: string;
-
-  @ApiProperty()
+  @ApiProperty({
+    description: 'pincode of the doctor',
+    example: '201304'
+  })
   @IsString()
-  country: string;
-}
+  readonly pincode: string;
 
-class Education {
-  @ApiProperty()
+  @ApiProperty({
+    description: 'country of the doctor',
+    example: 'India'
+  })
   @IsString()
-  degree: string;
-
-  @ApiProperty()
-  @IsString()
-  university: string;
-
-  @ApiProperty()
-  @IsNumber()
-  year: number;
-}
-
-class Experience {
-  @ApiProperty()
-  @IsString()
-  designation: string;
-
-  @ApiProperty()
-  @IsString()
-  organization: string;
-
-  @ApiProperty()
-  @IsNumber()
-  start_Year: number;
-
-  @ApiProperty()
-  @IsNumber()
-  end_Year: number;
+  readonly country: string;
 }
 
 export class DoctorPrfDto {
   @ApiProperty()
   @IsString()
-  user_Id: string;
+  user_id: string;
 
   @ApiProperty()
   @IsString()
   name: string;
 
   @ApiProperty()
-  @IsEmail()
+  @IsString()
   email: string;
 
   @ApiProperty()
-  @IsString()
+  @IsEmail()
   gender: string;
 
   @ApiProperty()
-  @IsString()
-  dob: Date;
-
-  @ApiProperty()
-  @IsArray()
-  specialization: string[];
-
-  @ApiProperty()
-  @IsObject()
-  address: Address;
-
-  @ApiProperty()
-  @IsArray()
-  education: Education[];
-
-  @ApiProperty()
-  @IsArray()
-  experience: Experience[];
+  @IsBoolean()
+  isVerified: boolean;
 
   @ApiProperty()
   @IsString()
-  country_Code: string;
+  description: string;
 
   @ApiProperty()
   @IsNumber()
-  contact: number;
-}
+  contactNumber: number;
+
+  @ApiProperty()
+  @IsNumber()
+  fees: number;
+  
+  @ApiProperty()
+  @IsString()
+  specialization: string;
+
+  @ApiProperty()
+  @IsObject()
+  location: string[];
 
 
-// // doctorprf.dto.ts
-// import { ApiProperty } from '@nestjs/swagger';
-// import { IsString, IsEmail, IsArray, IsObject, IsNumber, ArrayMinSize } from 'class-validator';
+  @ApiProperty()
+  @IsString()
+  stories: string;
 
-// export class DoctorPrfDto {
-//   @ApiProperty()
-//   @IsString()
-//   doc_id: string;
-
-//   @ApiProperty()
-//   @IsString()
-//   firstName: string;
-
-//   @ApiProperty()
-//   @IsString()
-//   lastName: string;
-
-//   @ApiProperty()
-//   @IsEmail()
-//   email: string;
-
-
-
-//   @ApiProperty()
-//   @IsString()
-//   password: string;
-
-//   @ApiProperty()
-//   @IsNumber()
-//   contactNumber: number;
-
-//   @ApiProperty()
-//   @IsString()
-//   specialization: string;
-
-//   @ApiProperty()
-//   @IsObject()
-//   location: string[];
+  @ApiProperty()
+  @IsString()
+  title: string;
   
 
-//   @ApiProperty()
-//   @IsArray()
-//   @ArrayMinSize(1)
-//   education: Array<{
-//     degree: string;
-//     university: string;
-//     year: number;
-//   }>;
 
-//   @ApiProperty()
-//   @IsArray()
-//   affiliations: string[];
+  @ApiProperty()
+  @IsArray()
+  @ArrayMinSize(1)
+  education: Array<{
+    degree: string;
+    university: string;
+    year: number;
+  }>;
 
-//   @ApiProperty()
-//   @IsArray()
-//   experience: Array<{
-//     position: string;
-//     organization: string;
-//     duration: string;
-//   }>;
-// }
+  @ApiProperty()
+  @IsArray()
+  affiliations: string[];
+
+  @ApiProperty()
+  @IsArray()
+  experience: Array<{
+    position: string;
+    organization: string;
+    duration: string;
+  }>;
+}

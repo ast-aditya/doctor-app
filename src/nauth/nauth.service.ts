@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException, Res, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { login_Dto, register_Dto } from './dto/auth.dto';
 import * as bcrypt from 'bcrypt' 
 import { InjectModel } from '@nestjs/mongoose';
@@ -7,79 +7,13 @@ import { Model } from 'mongoose';
 import { Tokens } from './types';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from './user.service';
-import { OAuth2Client } from 'google-auth-library';
-import { Request, Response } from 'express';
-
-const client = new OAuth2Client(
-    '569852703196-99ene8o0pca7migjcbi4s6mb1gbo0jg8.apps.googleusercontent.com',
-    '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',
-  );
 
 @Injectable()
 export class NauthService {
-  
     constructor(@InjectModel(AuthUserRegister.name) private UserModel: Model<AuthUserRegister>,
     private jwtService : JwtService,
     private UserService : UserService){}
 
-    
-    async googleLogin(req: any) {
-      const user = req.user;
-      const existingUser = await this.UserService.getUserbyEmail(user.email)
-      console.log(existingUser)
-      if(existingUser){
-        throw new ConflictException("Customer with email '" + user.email + "' already exists")
-      } 
-
-
-      if(existingUser){
-
-        const updatedUser: any = await this.UserService.updateUser({
-          name : existingUser.name,
-          email : existingUser.email,
-          password: ''
-        }  , existingUser.id);
-  
-        if (updatedUser) {
-          const tokens = await this.getTokens(
-            updatedUser.id,
-            updatedUser.email,
-          );
-  
-          const newUser = await this.updateRtHash(
-            updatedUser.id,
-            tokens.refresh_token,
-          );
-
-          return { tokens, profile: existingUser };
-      }else{
-        const newUser = await this.UserService.createUser({
-          name: user.name,
-          email: user.email,
-          password: '',
-        });
-        const userId = newUser.id;
-  
-        const tokens = await this.getTokens(
-          userId,
-          user.email,
-        );
-  
-        await this.updateRtHash(
-          userId,
-          tokens.refresh_token,
-        );
-  
-        return { tokens, profile: newUser };
-      }
-    }
-
-      
-  }
-    async validateUser(user: any){
-        console.log(user)
-        return true;
-    }
     async signupLocal(dto : register_Dto){
         try {
             const { name, email, password, role } = dto;
@@ -97,13 +31,19 @@ export class NauthService {
                 password: hashedPassword,
                 role,
               });
+            // const newUser = new this.UserModel({
+            //     email : email,
+            //     password : hash
+            // })
+            // const user = await newUser.save();
             const tokens = await this.getTokens(user.id, user.email)
             await this.updateRtHash(user.id, tokens.refresh_token);
+            // console.log(`User created successfully with Id : ${user.id}`);
             return tokens;
         } catch (error) {
             console.error(`Error occurred during signup: ${error}`);
             throw error;
-        } 
+        }
     }
     
     async siginLocal(dto : login_Dto){
@@ -127,7 +67,7 @@ export class NauthService {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role,
+                role: user.user_Type,
               };
               return { tokens, userData };
         } catch (error) {
@@ -163,39 +103,6 @@ export class NauthService {
         }
     }
     
-    async createOrUpdateUserFromGoogle(
-        token: string,
-        @Res({ passthrough: true }) response: Response,
-      ) {
-
-        try {
-          console.log('trying google signin/signup');
-          const ticket = await client.verifyIdToken({
-            idToken: token,
-            audience: '569852703196-99ene8o0pca7migjcbi4s6mb1gbo0jg8.apps.googleusercontent.com',
-          });
-      
-          const profile = ticket.getPayload();
-          if (!profile) {
-            throw new UnauthorizedException('Token has expired');
-          }
-          console.log(profile)
-          // const { sub, given_name, family_name, email, picture } = profile;
-        }catch(error) {
-          console.error(`Error while creating user: ${error.message}`, error.stack);
-      
-          if (
-            error instanceof ConflictException ||
-            error instanceof UnauthorizedException ||
-            error instanceof NotFoundException ||
-            error instanceof BadRequestException
-          ) {
-            throw error;
-          }
-      
-          throw new InternalServerErrorException('Error while creating user' + error.message);
-        }
-      }
     async updateRtHash(user_Id: string, rt: string){
         const hash = await this.hashData(rt);
         const user = await this.UserModel.findOneAndUpdate({ _id: user_Id }, { hashed_rt: hash });

@@ -23,7 +23,7 @@ export class prescrController {
         return this.prescriptionService.create(prescriptionDTO);
     }
 
-    @Public()
+  @Public()
   @Get(':doc_id')
   async getPrescriptionsByDocId(@Param('doc_id') docId: string): Promise<prescrSchema[]> {
     console.log("the controller is working fine");
@@ -31,7 +31,7 @@ export class prescrController {
       return prescriptions;
   }
   @Public()
-  @Put(':doc_id')
+  @Post(':doc_id')
   update(@Param('doc_id') docId: string, @Body() prescription: PrescriptionDTO): Promise<PrescriptionDTO> {
       return this.prescriptionService.update(docId, prescription);
   }

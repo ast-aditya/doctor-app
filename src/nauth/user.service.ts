@@ -3,18 +3,18 @@ import { AuthUserRegister, UserDocument } from "./schema/auth_register.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { update_Dto } from "./dto/auth.dto";
-import { ConfigService } from "@nestjs/config";
+import { bcrypt } from "src/utils/bcrypt";
+
 
 export class UserService {
-  constructor(@InjectModel(AuthUserRegister.name) private UserModel: Model<AuthUserRegister>,
-  private configService : ConfigService) { }
+  constructor(@InjectModel(AuthUserRegister.name) private UserModel: Model<AuthUserRegister>,) { }
   async getUsers(query: any): Promise<any> {
     try {
       const doc = await this.UserModel.find({}).select(
         '-password -refreshToken',
       );
       const totalCount = await this.UserModel.countDocuments();
-        console.log(this.configService.get('PORT'))
+
       // Convert Mongoose document to a plain JavaScript object
       const docObject = doc.map(doc => doc.toObject());
 
@@ -74,7 +74,7 @@ export class UserService {
       const userFields = {
         name: name ? name : user.name,
         password: password ? password : user.password,
-        role: role ? role : user.role,
+        role: role ? role : user.user_Type,
         email: email ? email : user.email,
       };
 
@@ -170,4 +170,53 @@ export class UserService {
     }
   }
 
+  async updateUserWithRefreshToken(
+    user_id: string,
+    refresh_token: string,
+  ): Promise<void> {
+    try {
+      const hashedToken = bcrypt.hashSync(refresh_token, 10);
+      console.log('hashed token', hashedToken);
+      await this.UserModel
+        .findByIdAndUpdate(user_id, { refreshToken: hashedToken })
+        .exec();
+      console.log(`Successfully updated refresh token for user ${user_id}`);
+    } catch (error) {
+      console.error(
+        `Something went wrong while updating refresh token for user ${user_id}: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Error while updating user with refresh token',
+      );
+    }
+    
+  }
+  
+  async updateUserToken(user_id: string, hash: string) {
+    try {
+      const user = await this.UserModel.findById(user_id);
+      user.hashed_rt = hash;
+      await user.save();
+      console.log(
+        `Refresh token ${user.hashed_rt} updated successfully for User with Id : ${user.id}`,
+      );
+      return user;
+    } catch (error) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof NotFoundException
+      ) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        `Error while creating user ${error.message}`,
+      );
+    }
+  }
+
+
+  // update(user_id: number, updateUserDto: UpdateUserDto) {
+  //   return `This action updates a #${user_id} customer`;
+  // }
 }
