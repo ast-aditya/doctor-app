@@ -1,8 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-@Schema()
-export class Address {
+export class Doc_address {
   @Prop({ required: true })
   line1: string;
 
@@ -22,7 +21,7 @@ export class Address {
   country: string;
 }
 
-export const AddressSchema = SchemaFactory.createForClass(Address);
+export const AddressSchema = SchemaFactory.createForClass(Doc_address);
 
 export class Education {
   @Prop({ required: true })
@@ -67,83 +66,102 @@ export class DoctorProfile extends Document {
   email: string;
 
   @Prop({ required: true })
+  @Prop()
   gender: string;
 
   @Prop({ required: true })
   dob: Date;
 
-  @Prop({required:true})
-  specialization: string[];
-
-  @Prop({ type: AddressSchema, required: true }) // use the Address schema
-  address: Address;
+  @Prop({ type: AddressSchema, required: true })
+  address: Doc_address;
 
   @Prop({type: EducationSchema, required: true})
   education: Education[];
-
-  @Prop({type: ExperienceSchema, required: true})
-  experience: Experience[];
 
   @Prop({ required: true })
   country_Code: string;
 
   @Prop({ required: true })
   contact: number;
-}
 
-export const DoctorProfileSchema = SchemaFactory.createForClass(DoctorProfile);
+  @Prop()
+  isVerified: boolean;
 
+  @Prop()
+  description: string;
 
-// // doctorProfile.schema.ts
-// import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-// import { Document, HydratedDocument } from 'mongoose';
+  @Prop()
+  fees: number;
 
-// export type DoctorDocument = HydratedDocument<DoctorProfile>
+  @Prop()
+  stories: {
+    title: String,
+    tags: [String], 
+    description: String;
+  }
 
-// @Schema({ collection: 'doctoruserscs'} )
+  @Prop()
+  specialization: string[];
 
-// export class DoctorProfile extends Document {
-//   @Prop()
-//   doc_id: string;
+  @Prop({ type: EducationSchema, required: true })
+  Education: Education;
   
-//   @Prop()
-//   firstName: string;
+  @Prop([String])
+  affiliations: string[];
 
-//   @Prop()
-//   lastName: string;
+  @Prop()
+  total_experience: number;
 
-//   @Prop()
-//   email: string;
-
-//   @Prop()
-//   password: string;
-
-//   @Prop()
-//   contactNumber: number;
-
-//   @Prop()
-//   specialization: string;
-
-//   @Prop()
-//   location:string[]; 
-
-// @Prop()
-// affiliations: string[];
-
-  // @Prop()
-  // education: Array<{
-  //   degree: string;
-  //   university: string;
-  //   year: number;
-  // }>;
+  @Prop()
+  @Prop({ type: ExperienceSchema, required: true })
+  experience: Experience;
 
 
-  // @Prop()
-  // experience: Array<{
-  //   position: string;
-  //   organization: string;
-  //   duration: string;
-  // }>;
-// }
+  @Prop()
+  Online_Schedule:{
+    Monday: [{ startTime: String, endTime: String }],
+    Tuesday: [{ startTime: String, endTime: String }],
+    Wedndesday: [{ startTime: String, endTime: String }],
+    Thirsday: [{ startTime: String, endTime: String }],
+    Friday: [{ startTime: String, endTime: String }];
+  }
 
-// export const DoctorProfileSchema = SchemaFactory.createForClass(DoctorProfile);
+  @Prop()
+  clinics: {
+    clinicID: 'ObjectId',
+      name: String,
+      address: String,
+      contactNumber: String,
+      email: String,
+      Schedule: {
+        Monday: [{ startTime: String, endTime: String }],
+      Tuesday: [{ startTime: String, endTime: String }],
+      Wedndesday: [{ startTime: String, endTime: String }],
+      Thirsday: [{ startTime: String, endTime: String }],
+      Friday: [{ startTime: String, endTime: String }];
+        
+      },
+  }
+
+  @Prop()
+  registrations: string;
+
+  @Prop()
+  slug: string;
+
+  @Prop()
+  profile_image: string;
+
+  @Prop()
+  awards_and_recognition: string[];
+
+  @Prop()
+  total_appointment_num: number;
+
+  @Prop()
+  numOfReviews: number;
+
+  @Prop()
+  rating: number;
+
+}
