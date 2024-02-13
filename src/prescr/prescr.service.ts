@@ -48,6 +48,13 @@ async delete(docId: string): Promise<boolean> {
   return result.deletedCount > 0;
 }
 
+async findAllPrescriptions(): Promise<prescrSchema[]> {
+  try {
+    return await this.prescriptionModel.find().exec();
+  } catch (error) {
+    throw new Error('Error fetching prescriptions');
+  }
+}
 
 }
 

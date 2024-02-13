@@ -4,13 +4,13 @@ import { DoctorProfile } from "./schemas/doctorsProfile.schema"
 import { ApiOperation, ApiResponse, ApiCreatedResponse } from '@nestjs/swagger';
 import { DoctorPrfDto } from './dto/doctorPrf.dto';
 import { prescrSchema } from 'src/prescr/schemas/prescr.schema';
-import { GetCurrentUserId } from 'src/common/decorators';
+import { GetCurrentUserId, Public } from 'src/common/decorators';
 import { Response } from 'express';
 
 @Controller('doctors')
 export class DoctorsController {
   constructor(private readonly doctorProfileService: DoctorsService) {}
-
+  @Public()
   @Post('create')
   @ApiOperation({ summary: 'Create Doctor' })
    @ApiResponse({ status: 201, description: 'The Doctor has been successfully created.'})
@@ -23,12 +23,12 @@ export class DoctorsController {
    async createDoctor(@Body() create_Doctor_DTO: DoctorPrfDto,  @GetCurrentUserId() user_Id : string,@Res() res: Response): Promise<any> {
       return this.doctorProfileService.create(create_Doctor_DTO, user_Id);
   }
-
+  @Public()
   @Get()
   async getAllProfiles(): Promise<DoctorProfile[]> {
     return this.doctorProfileService.findAllProfiles();
   }
-
+  @Public()
   @Get(':doc_id')
   async getPrescriptionsByDocId(@Param('doc_id') docId: string): Promise<DoctorProfile[]> {
     console.log("the controller is working fine");
@@ -36,7 +36,7 @@ export class DoctorsController {
       return tempDoctor;
      
   }
-
+  @Public()
   @Delete('delete/:doc_id')
   async delete(@Param('doc_id') docId: string): Promise<void> {
       const deleted = await this.doctorProfileService.delete(docId);

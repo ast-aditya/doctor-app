@@ -67,9 +67,11 @@ export class DoctorsService {
   
       const doctor_Profile = await newProfile.save();
       console.log(`Doctor Profile created successfully with Id : ${doctor_Profile.id}`);
+      
       return doctor_Profile;
     } catch (error) {
       throw new InternalServerErrorException(
+        console.log(error),
         `Error while creating profile ${error.message}`,
       );
     }

@@ -44,4 +44,9 @@ export class prescrController {
       }
   }
 
+  @Public()
+  @Get()
+  async getAllProfiles(): Promise<prescrSchema[]> {
+    return this.prescriptionService.findAllPrescriptions();
+  }
 }
