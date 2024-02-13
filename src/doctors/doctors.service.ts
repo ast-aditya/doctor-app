@@ -18,7 +18,7 @@ export class DoctorsService {
   // }
   async create(create_Doctor_DTO: DoctorPrfDto, user_Id : string): Promise<DoctorPrfDto> {
     try {
-      const {gender, specialization, address, education, experience, contactNumber } = create_Doctor_DTO;
+      const {user_Id,gender, specialization, address, education, experience, contactNumber } = create_Doctor_DTO;
       const user = await this.UserService.getUserbyId(user_Id);
       
         // const createdPrescription = new this.doctorProfileModel(create_Doctor_DTO);
@@ -48,11 +48,11 @@ export class DoctorsService {
         //   university: edu.university,
         //   year: edu.year
         // })),
-        Experience: {
+        experience: {
           designation: experience.designation,
-          organization: experience.organisation,
-          start_Year: experience.start_year,
-          end_Year: experience.end_year
+          organisation: experience.organisation,
+          start_year: experience.start_year,
+          end_year: experience.end_year
         },
         // experience: experience.map(exp => ({
         //   designation: exp.designation,

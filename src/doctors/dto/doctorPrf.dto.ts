@@ -106,6 +106,9 @@ export class storiesDto{
 }
 
 export class DoctorPrfDto {
+  @ApiProperty()
+  @IsString()
+  user_Id: string;
 
   @ApiProperty()
   @IsString()
