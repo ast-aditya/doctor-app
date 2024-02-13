@@ -108,10 +108,6 @@ export class storiesDto{
 export class DoctorPrfDto {
   @ApiProperty()
   @IsString()
-  user_Id: string;
-
-  @ApiProperty()
-  @IsString()
   name: string;
 
   @ApiProperty()
@@ -154,7 +150,7 @@ export class DoctorPrfDto {
   experience: ExperienceDto;
 
   @ApiProperty()
-  education: EducationDto;
+  Education: EducationDto;
 
   @ApiProperty()
   stories: storiesDto;

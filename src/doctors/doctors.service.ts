@@ -4,6 +4,8 @@ import { Model } from 'mongoose';
 import { DoctorProfile } from './schemas/doctorsProfile.schema';
 import { DoctorPrfDto } from './dto/doctorPrf.dto';
 import { UserService } from 'src/nauth/user.service';
+// import { APIFeatures } from 'src/utils/apiFeatures';
+// import { query } from 'express';
 
 @Injectable()
 export class DoctorsService {
@@ -16,16 +18,16 @@ export class DoctorsService {
   //   const createdPrescription = new this.doctorProfileModel(DoctorDTO);
   //   return createdPrescription.save();
   // }
-  async create(create_Doctor_DTO: DoctorPrfDto, user_Id : string): Promise<DoctorPrfDto> {
+  async create(create_Doctor_DTO: DoctorPrfDto, user_Id : string) {
     try {
-      const {user_Id,gender, specialization, address, education, experience, contactNumber } = create_Doctor_DTO;
+      const {gender, specialization, address, Education, experience, contactNumber } = create_Doctor_DTO;
       const user = await this.UserService.getUserbyId(user_Id);
       
         // const createdPrescription = new this.doctorProfileModel(create_Doctor_DTO);
         // const doctor_Profile = await createdPrescription.save();
         // return doctor_Profile;
       const newProfile = new this.doctorProfileModel({
-        user_Id: user_Id,
+
         name: user.name,
         email: user.email, 
         gender: gender,
@@ -39,9 +41,9 @@ export class DoctorsService {
           country: address.country
         },
         education: {
-          degree: education.degree,
-          university: education.university,
-          year: education.year
+          degree: Education.degree,
+          university: Education.university,
+          year: Education.year
         },
         // education: education.map(edu => ({
         //   degree: edu.degree,
@@ -82,7 +84,7 @@ export class DoctorsService {
     }
   }
 
-  async getDoctorByDocId(docId: string): Promise<DoctorProfile[]> {
+  async getDoctorByDocId(docId: string, query?: any): Promise<DoctorProfile[]> {
     console.log("the service is fine");
     try {
       const doctors = await this.doctorProfileModel.find({ doc_id: docId }).exec();
@@ -100,5 +102,7 @@ export class DoctorsService {
     const result = await this.doctorProfileModel.deleteOne({ _id: docId });
     return result.deletedCount > 0;
   }
+
+  
 
 }

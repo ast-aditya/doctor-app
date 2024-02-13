@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { Schema as mongooseSchema } from 'mongoose';
 
 export class Doc_address {
   @Prop({ required: true })
@@ -57,9 +58,6 @@ export const ExperienceSchema = SchemaFactory.createForClass(Experience);
 export class DoctorProfile extends Document {
 
   @Prop()
-  user_Id: string;
-
-  @Prop()
   name: string;
 
   @Prop()
@@ -75,8 +73,6 @@ export class DoctorProfile extends Document {
   @Prop({ type: AddressSchema, required: true })
   address: Doc_address;
 
-  @Prop({type: EducationSchema, required: true})
-  education: Education[];
 
   @Prop({ required: true })
   country_Code: string;
@@ -93,12 +89,19 @@ export class DoctorProfile extends Document {
   @Prop()
   fees: number;
 
-  @Prop()
+  @Prop({
+    type:{
+      title: String,
+      tags: Array<String>,
+      description: String
+    }
+})
   stories: {
-    title: String,
-    tags: [String], 
-    description: String;
+    title: string,
+    tags: [string], 
+    description: string;
   }
+
 
   @Prop()
   specialization: string;
@@ -117,18 +120,26 @@ export class DoctorProfile extends Document {
   experience: Experience;
 
 
-  @Prop()
+  @Prop({
+    type:{
+      Monday: [{ startTime: String, endTime: String }],
+      Tuesday: [{ startTime: String, endTime: String }],
+      Wedndesday: [{ startTime: String, endTime: String }],
+      Thirsday: [{ startTime: String, endTime: String }],
+      Friday: [{ startTime: String, endTime: String }]
+    }
+  })
   Online_Schedule:{
-    Monday: [{ startTime: String, endTime: String }],
-    Tuesday: [{ startTime: String, endTime: String }],
-    Wedndesday: [{ startTime: String, endTime: String }],
-    Thirsday: [{ startTime: String, endTime: String }],
-    Friday: [{ startTime: String, endTime: String }];
+    Monday: [{ startTime: string, endTime: String }],
+    Tuesday: [{ startTime: string, endTime: string }],
+    Wedndesday: [{ startTime: string, endTime: string }],
+    Thirsday: [{ startTime: string, endTime: string }],
+    Friday: [{ startTime: string, endTime: string }];
   }
 
-  @Prop()
-  clinics: {
-    clinicID: 'ObjectId',
+  @Prop({
+    type: {
+    clinicID: String,
       name: String,
       address: String,
       contactNumber: String,
@@ -138,7 +149,23 @@ export class DoctorProfile extends Document {
       Tuesday: [{ startTime: String, endTime: String }],
       Wedndesday: [{ startTime: String, endTime: String }],
       Thirsday: [{ startTime: String, endTime: String }],
-      Friday: [{ startTime: String, endTime: String }];
+      Friday: [{ startTime: String, endTime: String }]
+    }
+  }
+
+  })
+  clinics: {
+    clinicID: string,
+      name: string,
+      address: string,
+      contactNumber: string,
+      email: string,
+      Schedule: {
+        Monday: [{ startTime: string, endTime: string }],
+      Tuesday: [{ startTime: string, endTime: string }],
+      Wedndesday: [{ startTime: string, endTime: string }],
+      Thirsday: [{ startTime: string, endTime: string }],
+      Friday: [{ startTime: string, endTime: string }];
         
       },
   }
@@ -164,5 +191,30 @@ export class DoctorProfile extends Document {
   @Prop()
   rating: number;
 
+  @Prop({
+    type: {
+      userId: mongooseSchema.Types.ObjectId,
+      userName: String,
+    },
+    ref: 'User',
+  })
+  createdBy: {
+    userId: mongooseSchema.Types.ObjectId;
+    userName: String;
+  };
+
+  @Prop({
+    type: {
+      userId: mongooseSchema.Types.ObjectId,
+      userName: String,
+    },
+    ref: 'User',
+  })
+  updatedBy: {
+    userId: mongooseSchema.Types.ObjectId;
+    userName: String;
+  };
 }
+
+
 export const DoctorProfileSchema = SchemaFactory.createForClass(DoctorProfile);

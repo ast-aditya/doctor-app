@@ -7,8 +7,9 @@ import { AtGuard } from './common/guards';
 //swagger function implementation :)
 
 async function bootstrap() {
+  console.log("hI I AM CONSOLE",process.env.MONGO_URI);
   const app = await NestFactory.create(AppModule);
-
+  
 
   const config = new DocumentBuilder()
   .setTitle('Hospital project')
@@ -22,6 +23,7 @@ async function bootstrap() {
   SwaggerModule.setup('api',app,document);
 
   app.useGlobalPipes(new ValidationPipe());
+  // console.log("hI I AM CONSOLE",process.env.MONGO_URI);
   await app.listen(3000);
 }
 bootstrap();

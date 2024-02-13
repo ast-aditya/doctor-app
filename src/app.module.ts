@@ -17,7 +17,12 @@ import { SpecializationModule } from './specialization/specialization.module';
 import { ConfigModule } from '@nestjs/config'; 
 
 @Module({
-  imports: [MongooseModule.forRoot(process.env.MONGO_URI), AuthModule, PatientModule, DoctorsModule, PrescrModule,ClinicModule, AppointmentsModule, MailerModule.forRoot({
+  imports: 
+  
+  [ConfigModule.forRoot({
+    envFilePath: `.env` , isGlobal: true
+   })
+   ,MongooseModule.forRoot(process.env.MONGO_URI), AuthModule, PatientModule, DoctorsModule, PrescrModule,ClinicModule, AppointmentsModule, MailerModule.forRoot({
     transport: {
       host: 'smtp.gmail.com',
       auth: {
@@ -26,9 +31,7 @@ import { ConfigModule } from '@nestjs/config';
       }
     }
   }), 
-  ConfigModule.forRoot({
-     envFilePath: `${process.env.NODE_ENV}.env` 
-    }),
+  
     BillingModule, NauthModule, ClinicModule, SpecializationModule],
   
   controllers: [AppController],
