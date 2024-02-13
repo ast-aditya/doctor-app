@@ -82,7 +82,7 @@ export class DoctorProfile extends Document {
   country_Code: string;
 
   @Prop({ required: true })
-  contact: number;
+  contactNumber: number;
 
   @Prop()
   isVerified: boolean;
@@ -101,7 +101,7 @@ export class DoctorProfile extends Document {
   }
 
   @Prop()
-  specialization: string[];
+  specialization: string;
 
   @Prop({ type: EducationSchema, required: true })
   Education: Education;
@@ -165,3 +165,4 @@ export class DoctorProfile extends Document {
   rating: number;
 
 }
+export const DoctorProfileSchema = SchemaFactory.createForClass(DoctorProfile);

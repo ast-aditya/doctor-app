@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { DoctorProfile } from './schemas/doctorsProfile.schema';
 import { DoctorPrfDto } from './dto/doctorPrf.dto';
 import { UserService } from 'src/nauth/user.service';
+
 @Injectable()
 export class DoctorsService {
   constructor(
@@ -17,10 +18,10 @@ export class DoctorsService {
   // }
   async create(create_Doctor_DTO: DoctorPrfDto, user_Id : string): Promise<DoctorPrfDto> {
     try {
-      const {gender, dob, specialization, address, education, experience, country_Code, contact } = create_Doctor_DTO;
+      const {gender, specialization, address, education, experience, contactNumber } = create_Doctor_DTO;
       const user = await this.UserService.getUserbyId(user_Id);
       
-        const createdPrescription = new this.doctorProfileModel(create_Doctor_DTO);
+        // const createdPrescription = new this.doctorProfileModel(create_Doctor_DTO);
         // const doctor_Profile = await createdPrescription.save();
         // return doctor_Profile;
       const newProfile = new this.doctorProfileModel({
@@ -28,7 +29,6 @@ export class DoctorsService {
         name: user.name,
         email: user.email, 
         gender: gender,
-        dob: dob,
         specialization: specialization,
         address: {
           line1: address.line1,
@@ -38,19 +38,29 @@ export class DoctorsService {
           pincode: address.pincode,
           country: address.country
         },
-        education: education.map(edu => ({
-          degree: edu.degree,
-          university: edu.university,
-          year: edu.year
-        })),
-        experience: experience.map(exp => ({
-          designation: exp.designation,
-          organization: exp.organization,
-          start_Year: exp.start_Year,
-          end_Year: exp.end_Year
-        })),
-        country_Code: country_Code,
-        contact: contact
+        education: {
+          degree: education.degree,
+          university: education.university,
+          year: education.year
+        },
+        // education: education.map(edu => ({
+        //   degree: edu.degree,
+        //   university: edu.university,
+        //   year: edu.year
+        // })),
+        Experience: {
+          designation: experience.designation,
+          organization: experience.organisation,
+          start_Year: experience.start_year,
+          end_Year: experience.end_year
+        },
+        // experience: experience.map(exp => ({
+        //   designation: exp.designation,
+        //   organization: exp.organisation,
+        //   start_Year: exp.start_year,
+        //   end_Year: exp.end_year
+        // })),
+        contact: contactNumber
       });
   
       const doctor_Profile = await newProfile.save();

@@ -11,9 +11,9 @@ export class SpecializationController {
   async create(@Body() specialDTO: specialDTO) {
     return this.specializationService.create(specialDTO);
   }
-    @Public()
-    @Get('search')
-  async search(@Query('text') text: string) {
-    return this.specializationService.search(text);
-  }
+    // @Public()
+    // @Get('search')
+  // async search(@Query('text') text: string) {
+  //   return this.specializationService.search(text);
+  // }
 }

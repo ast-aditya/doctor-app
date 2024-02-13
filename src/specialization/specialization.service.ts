@@ -3,14 +3,13 @@ import { SpecializationSchema, specializationSchema } from './schema/specializat
 import { specialDTO } from './dtos/specialization.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { SearchService } from './search.service';
+// import { SearchService } from './search.service';
 
 
 
 @Injectable()
 export class SpecializationService {
-    constructor(@InjectModel(SpecializationSchema.name) private specialModel: Model<specializationSchema>,
-    private readonly searchService : SearchService) {}
+    constructor(@InjectModel(SpecializationSchema.name) private specialModel: Model<specializationSchema>) {}
     
     
     async create(SpecialDTO: specialDTO): Promise<any> {
@@ -27,7 +26,7 @@ export class SpecializationService {
       });
       const special = await newSpecial.save(); 
       // this.searchService.indexSpecialization(special)
-      this.searchService.indexSpecialization({ specialization_name, LevelOfDifficulty, doc_id });
+      // this.searchService.indexSpecialization({ specialization_name, LevelOfDifficulty, doc_id });
       console.log(`Specialization created successfully with Id : ${newSpecial.id}`);
 
       return special;
@@ -44,9 +43,9 @@ export class SpecializationService {
       );
     }
   }
-  public async search(text: string){
-    return await this.searchService.search(text);
-  }
+  // public async search(text: string){
+  //   return await this.searchService.search(text);
+  // }
 
   async getSpecialById(specialization_id: string){
     try {

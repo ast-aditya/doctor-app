@@ -45,14 +45,67 @@ export class Doc_address{
     description: 'country of the doctor',
     example: 'India'
   })
+  @ApiProperty()
   @IsString()
   readonly country: string;
 }
 
-export class DoctorPrfDto {
+export class EducationDto{
+  @ApiProperty({
+    description: 'degree of the doctor',
+    example: 'MD/ MBBS'
+  })
+  @IsString()
+  degree: string;
+
+  @ApiProperty({
+    description: 'University of the doctor',
+    example: 'AIIMS'
+  })
+  @IsString()
+  university: string;
+
+  @ApiProperty({
+    description: 'year of the doctor completing his degree',
+    example: '2024'
+  })
+  @IsString()
+  year: string;
+}
+
+export class ExperienceDto{
   @ApiProperty()
   @IsString()
-  user_id: string;
+  designation: string;
+
+  @ApiProperty()
+  @IsString()
+  organisation: string;
+
+  @ApiProperty()
+  @IsString()
+  start_year: string;
+
+  @ApiProperty()
+  @IsString()
+  end_year: string;
+}
+
+export class storiesDto{
+  @ApiProperty()
+  @IsString()
+  title: string;
+
+  @ApiProperty()
+  @IsString()
+  tags: string;
+
+  @ApiProperty()
+  @IsString()
+  description: string;
+}
+
+export class DoctorPrfDto {
 
   @ApiProperty()
   @IsString()
@@ -88,37 +141,20 @@ export class DoctorPrfDto {
 
   @ApiProperty()
   @IsObject()
-  location: string[];
-
-
-  @ApiProperty()
-  @IsString()
-  stories: string;
-
-  @ApiProperty()
-  @IsString()
-  title: string;
-  
-
-
-  @ApiProperty()
-  @IsArray()
-  @ArrayMinSize(1)
-  education: Array<{
-    degree: string;
-    university: string;
-    year: number;
-  }>;
+  address: Doc_address;
 
   @ApiProperty()
   @IsArray()
   affiliations: string[];
 
   @ApiProperty()
-  @IsArray()
-  experience: Array<{
-    position: string;
-    organization: string;
-    duration: string;
-  }>;
+  experience: ExperienceDto;
+
+  @ApiProperty()
+  education: EducationDto;
+
+  @ApiProperty()
+  stories: storiesDto;
+  
+
 }
