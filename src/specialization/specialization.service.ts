@@ -1,138 +1,59 @@
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { SpecializationSchema, specializationSchema } from './schema/specialization.schema';
-import { specialDTO } from './dtos/specialization.dto';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-// import { SearchService } from './search.service';
-
-
+import { Specialization } from './schema/specialization.schema';
+import { SpecialDTO } from './dtos/specialization.dto';
 
 @Injectable()
 export class SpecializationService {
-    constructor(@InjectModel(SpecializationSchema.name) private specialModel: Model<specializationSchema>) {}
-    
-    
-    async create(SpecialDTO: specialDTO): Promise<any> {
-    const { specialization_name, LevelOfDifficulty, doc_id } = SpecialDTO;
-    try {
-      // const existingSpecial = await this.specialModel.findOne({ specialization_id });
-      // if (existingSpecial) {
-      //   throw new ConflictException('Specialization with the same name already exists');
-      // }
-      const newSpecial = new this.specialModel({
-        specialization_name,
-        LevelOfDifficulty,
-        doc_id
-      });
-      const special = await newSpecial.save(); 
-      // this.searchService.indexSpecialization(special)
-      // this.searchService.indexSpecialization({ specialization_name, LevelOfDifficulty, doc_id });
-      console.log(`Specialization created successfully with Id : ${newSpecial.id}`);
+  constructor(@InjectModel(Specialization.name) private readonly specializationModel: Model<Specialization>) {}
 
-      return special;
-    } catch (error) {
-      if (
-        error instanceof ConflictException ||
-        error instanceof BadRequestException ||
-        error instanceof NotFoundException
-      ) {
-        throw error;
-      }
-      throw new InternalServerErrorException(
-        `Error while creating Specialization ${error.message}`,
-      );
-    }
-  }
-  // public async search(text: string){
-  //   return await this.searchService.search(text);
-  // }
-
-  async getSpecialById(specialization_id: string){
+  async create(createSpecializationDto: SpecialDTO): Promise<Specialization> {
     try {
-      const special = await this.specialModel.findById(specialization_id);
-      if (!special) {
-        throw new NotFoundException(`Specialization with ID "${specialization_id}" not found`);
-      }
-      return special;
+      const createdSpecialization = new this.specializationModel(createSpecializationDto);
+      return await createdSpecialization.save();
     } catch (error) {
-      throw new InternalServerErrorException(`Error while getting Specialization ${error.message}`);
+      throw new InternalServerErrorException(`Error creating specialization: ${error.message}`);
     }
   }
 
-  async delete(specialization_id: string){
+  async findAll(): Promise<Specialization[]> {
     try {
-      const deleted = await this.specialModel.deleteOne({ specialization_id });
-      if (!deleted) {
-        throw new NotFoundException(`Specialization with ID "${specialization_id}" not found`);
-      }
+      return await this.specializationModel.find().exec();
     } catch (error) {
-      throw new InternalServerErrorException(`Error while deleting Specialization ${error.message}`);
-    }
-  }
-  
-  async getAllspecials() {
-    try {
-      return await this.specialModel.find();
-    } catch (error) {
-      throw new InternalServerErrorException(`Error while getting all Specializations ${error.message}`);
-    }
-  }
-  
-  async addspecialization(specialization_id: string, doc_id: string) {
-    try {
-      const special = await this.getSpecialById( specialization_id );
-      if (!special) {
-        throw new NotFoundException(`Specialization with ID "${specialization_id}" not found`);
-      }
-      special.doc_id.push(doc_id);
-      return await special.save();
-    } catch (error) {
-      throw new InternalServerErrorException(`Error while adding doctor to specialization ${error.message}`);
+      throw new InternalServerErrorException(`Error fetching specializations: ${error.message}`);
     }
   }
 
-
-  async update(specialization_id: string, specialDTO: specialDTO){
+  async findOne(id: string): Promise<Specialization> {
     try {
-      const { specialization_name, LevelOfDifficulty, doc_id } = specialDTO;
-      const existingSpecial = await this.getSpecialById(specialization_id);
-      console.log(existingSpecial)
-      if (!existingSpecial) {
-        throw new NotFoundException(`Specialization with ID "${specialization_id}" not found`);
-      }
-      const updatedSpecial = {
-        specialization_id,
-        specialization_name, 
-        LevelOfDifficulty, 
-        doc_id
-      };
-      const special =  await this.specialModel.updateOne({ _id: specialization_id }, { $set: updatedSpecial }, { upsert: true });
-      return {special, updatedSpecial};
+      return await this.specializationModel.findById(id).exec();
     } catch (error) {
-      if (
-        error instanceof ConflictException ||
-        error instanceof BadRequestException ||
-        error instanceof NotFoundException
-      ) {
-        throw error;
-      }
-      throw new InternalServerErrorException(
-        `Error while updating Specialization ${error.message}`,
-      );
+      throw new InternalServerErrorException(`Error fetching specialization: ${error.message}`);
     }
   }
-  async getSpecialByDoctor(doc_id: string) {
+  async findByDoctorId(doctorIds: string[]): Promise<Specialization[]> {
     try {
-      const specials = await this.specialModel.find({ Doc_id: doc_id });
-      return Promise.all(specials.map(async special => {
-        return this.getSpecialById(special._id);
-      }));
+      // Query specializations where doc_id contains any of the provided doctorIds
+      return await this.specializationModel.find({ doc_id: { $in: doctorIds } }).exec();
     } catch (error) {
-      throw new InternalServerErrorException(`Error while getting Specializations by doctor ${error.message}`);
+      throw new InternalServerErrorException(`Error fetching specializations by doctorId: ${error.message}`);
     }
   }
-  
-  
+  async update(id: string, updateSpecializationDto: SpecialDTO): Promise<Specialization> {
+    try {
+      return await this.specializationModel.findByIdAndUpdate(id, updateSpecializationDto, { new: true }).exec();
+    } catch (error) {
+      throw new InternalServerErrorException(`Error updating specialization: ${error.message}`);
+    }
+  }
 
-
+  async remove(id: string): Promise<boolean> {
+    try {
+      const result = await this.specializationModel.deleteOne({ _id: id }).exec();
+      return result.deletedCount > 0;
+    } catch (error) {
+      throw new InternalServerErrorException(`Error removing specialization: ${error.message}`);
+    }
+  }
 }
