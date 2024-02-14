@@ -10,7 +10,7 @@ import { Response } from 'express';
 @Controller('doctors')
 export class DoctorsController {
   constructor(private readonly doctorProfileService: DoctorsService) {}
-  @Public()
+  
   @Post('create')
   @ApiOperation({ summary: 'Create Doctor' })
    @ApiResponse({ status: 201, description: 'The Doctor has been successfully created.'})
