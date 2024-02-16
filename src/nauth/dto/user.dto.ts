@@ -1,70 +1,111 @@
-import { Type } from "class-transformer";
-import { IsNotEmpty, IsString, IsPhoneNumber, IsOptional, IsArray } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, IsOptional } from "class-validator";
 
-class Options {
+export class register_Dto {
+  @IsNotEmpty()
+  @IsString()
+  name: string;
 
-    @IsNotEmpty()
-    @IsString()
-    googleId?: string;
+  @IsNotEmpty()
+  @IsEmail() 
+  email: string;
 
-    @IsNotEmpty()
-    @IsString()
-    profilePictureUrl?: string;
+  @IsNotEmpty()
+  @IsString()
+  password: string;
 
-    @IsNotEmpty()
-    @IsString()
-    designation?: string;
+  @IsOptional()
+  @IsString()
+  user_Type: string;
 
-    @IsNotEmpty()
-    @IsString()
-    industry?: string;
+  @IsString()
+  hashed_rt: string;
 
-    @IsNotEmpty()
-    @IsString()
-    expertise?: string;
+  @IsOptional()
+  @IsString()
+  picture: string;
+}
 
-    @IsNotEmpty()
-    @IsArray()
-    @IsString({ each: true })
-    interests?: string[];
+export class update_Dto {
+  @IsOptional()
+  @IsString()
+  name?: string;
 
-    @IsNotEmpty()
-    @IsString()
-    otp?: string;
+  @IsOptional()
+  @IsEmail()
+  email?: string;
 
-    @IsNotEmpty()
-    @IsString()
-    verified?: boolean;
-   
-    @IsNotEmpty()
-    @IsString()
-    refreshToken?: string | null;
-  }
-export class UpdateOptions extends Options {
-    @IsNotEmpty()
-    @IsString()
-    name?: string;
+  @IsNotEmpty()
+  @IsString()
+  password: string;
 
-    @IsNotEmpty()
-    @IsString()
-    email?: string;
+  @IsOptional()
+  @IsString()
+  user_Type?: string;
 
-    @IsNotEmpty()
-    @IsString()
-    password?: string;
+  @IsOptional()
+  @IsString()
+  hashed_rt?: string;
 
-    @IsNotEmpty()
-    @IsPhoneNumber()
-    mobileNumber?: number;
-    
-  }
-  export class UpdateUserDto {
-    @IsNotEmpty()
-    @IsOptional()
-    @IsString()
-    id: string;
+  @IsOptional()
+  @IsString()
+  picture?: string;
+}
+
+export class login_Dto {
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  password: string;
+}
+
+
+// import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+
+// export class register_Dto{
+
+//     @IsNotEmpty()
+//     @IsString()
+//     name: string;
+
+//     @IsNotEmpty()
+//     @IsEmail()
+//     email: string;
   
-    @IsNotEmpty()
-    @Type(() => UpdateOptions)
-    options?: UpdateOptions;
-  }
+//     @IsNotEmpty()
+//     @IsString()
+//     password: string;
+
+//     // @IsNotEmpty()
+//     // @IsString()
+//     role: string;
+// }
+// export class update_Dto{
+
+//     @IsNotEmpty()
+//     @IsString()
+//     name?: string;
+
+//     @IsNotEmpty()
+//     @IsEmail()
+//     email?: string;
+  
+//     @IsNotEmpty()
+//     @IsString()
+//     password: string;
+
+//     @IsNotEmpty()
+//     @IsString()
+//     role?: string;
+// }
+// export class login_Dto{
+//     @IsNotEmpty()
+//     @IsEmail()
+//     email: string;
+  
+//     @IsNotEmpty()
+//     @IsString()
+//     password: string;
+// }

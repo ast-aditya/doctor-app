@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { NauthService } from './nauth.service';
 // import { NauthController } from './nauth.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AuthUserRegister, AuthUserRegistrationSchema } from './schema/auth_register.schema';
+import { User, UserSchema } from './schema/user.schema';
 import { AtStrategy, RtStrategy } from './strategies';
 import { JwtModule } from '@nestjs/jwt';
 import { UserController } from './user.controller';
@@ -12,7 +12,7 @@ import { GoogleStrategy } from './strategies/google.strategy';
 @Module({
   imports:[
     MongooseModule.forFeature([
-      { name: AuthUserRegister.name, schema : AuthUserRegistrationSchema}
+      { name: User.name, schema : UserSchema}
     ]),
     JwtModule.register({}),
   ],

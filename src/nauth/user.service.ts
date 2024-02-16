@@ -1,13 +1,12 @@
 import { BadRequestException, ConflictException, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { AuthUserRegister, UserDocument } from "./schema/auth_register.schema";
+import { User, UserDocument } from "./schema/user.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { update_Dto } from "./dto/auth.dto";
+import { update_Dto } from "./dto/user.dto";
 import { bcrypt } from "src/utils/bcrypt";
 
-
 export class UserService {
-  constructor(@InjectModel(AuthUserRegister.name) private UserModel: Model<AuthUserRegister>,) { }
+  constructor(@InjectModel(User.name) private UserModel: Model<User>,) { }
   async getUsers(query: any): Promise<any> {
     try {
       const doc = await this.UserModel.find({}).select(
@@ -30,6 +29,9 @@ export class UserService {
     try {
       const user = await this.UserModel.findOne({ email: email });
       // this.logger.log(`User successfully fetched with Id : ${user.id}`)
+      if(!user){
+        return user;
+      }
       return user;
     } catch (error) {
       console.error(
@@ -66,7 +68,7 @@ export class UserService {
     userDto: update_Dto,
     userId: string,
   ): Promise<UserDocument> {
-    const { name, role, email, password } =
+    const { name, email, password } =
       userDto;
     try {
       let user = await this.getUserbyId(userId);
@@ -74,7 +76,7 @@ export class UserService {
       const userFields = {
         name: name ? name : user.name,
         password: password ? password : user.password,
-        role: role ? role : user.user_Type,
+        // role: role ? role : user.user_Type,
         email: email ? email : user.email,
       };
 
@@ -119,22 +121,28 @@ export class UserService {
     }
   }
   async createUser(createUserDto: any): Promise<UserDocument> {
-    const { name, email, password, role } = createUserDto;
+    console.log(createUserDto)
+    const { name, email, password, user_Type, hashed_rt, picture } = createUserDto;
     try {
       const existingUser = await this.getUserbyEmail(email);
       if (existingUser) {
         throw new ConflictException('User with the same email already exists');
       }
-
+  
       const newUser = new this.UserModel({
         name,
-        email: email,
+        email,
         password,
-        role
+        user_Type,
+        hashed_rt,
+        picture,
       });
       const user = await newUser.save();
-
+  
       console.log(`User created successfully with Id : ${user.id}`);
+  
+      user.password = undefined;
+      user.hashed_rt = undefined;
 
       return user;
     } catch (error) {
@@ -150,6 +158,39 @@ export class UserService {
       );
     }
   }
+  
+  // async createUser(createUserDto: any): Promise<UserDocument> {
+  //   const { name, email, password, role } = createUserDto;
+  //   try {
+  //     const existingUser = await this.getUserbyEmail(email);
+  //     if (existingUser) {
+  //       throw new ConflictException('User with the same email already exists');
+  //     }
+
+  //     const newUser = new this.UserModel({
+  //       name,
+  //       email: email,
+  //       password,
+  //       role
+  //     });
+  //     const user = await newUser.save();
+
+  //     console.log(`User created successfully with Id : ${user.id}`);
+
+  //     return user;
+  //   } catch (error) {
+  //     if (
+  //       error instanceof ConflictException ||
+  //       error instanceof BadRequestException ||
+  //       error instanceof NotFoundException
+  //     ) {
+  //       throw error;
+  //     }
+  //     throw new InternalServerErrorException(
+  //       `Error while creating user ${error.message}`,
+  //     );
+  //   }
+  // }
   async removeRefreshToken(userId: string) {
     try {
       const user = await this.UserModel.findOne().where({ _id: userId });
@@ -214,9 +255,4 @@ export class UserService {
       );
     }
   }
-
-
-  // update(user_id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${user_id} customer`;
-  // }
 }

@@ -3,7 +3,7 @@ import { SpecializationService } from './specialization.service';
 import { SpecializationController } from './specialization.controller';
 import { MongooseModule } from '@nestjs/mongoose/dist/mongoose.module';
 import { SpecializationSchema, Specialization } from './schema/specialization.schema';
-import { AuthUserRegister, AuthUserRegistrationSchema } from 'src/nauth/schema/auth_register.schema';
+import { User, UserSchema } from 'src/nauth/schema/user.schema';
 import { NauthModule } from 'src/nauth/nauth.module';
 import { UserService } from 'src/nauth/user.service';
 // import { SearchService } from './search.service';
@@ -25,7 +25,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 //     }),
 //     inject: [ConfigService], 
 // }),
-  MongooseModule.forFeature([{ name: AuthUserRegister.name, schema : AuthUserRegistrationSchema}]), NauthModule],
+  MongooseModule.forFeature([{ name: User.name, schema : UserSchema}]), NauthModule],
 
   providers: [SpecializationService,UserService],
   controllers: [SpecializationController]

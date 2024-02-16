@@ -7,11 +7,11 @@ import { DoctorProfile,DoctorProfileSchema } from './schemas/doctorsProfile.sche
 import { JwtModule } from '@nestjs/jwt';
 import { JwtMiddleware } from './middleware/jwt.middleware';
 import { UserService } from 'src/nauth/user.service';
-import { AuthUserRegister, AuthUserRegistrationSchema } from 'src/nauth/schema/auth_register.schema';
+import { User, UserSchema } from 'src/nauth/schema/user.schema';
 
 @Module({
   imports: [ MongooseModule.forFeature([{ name: DoctorProfile.name, schema: DoctorProfileSchema }]),
-  MongooseModule.forFeature([{ name: AuthUserRegister.name, schema : AuthUserRegistrationSchema}]),
+  MongooseModule.forFeature([{ name: User.name, schema : UserSchema}]),
   JwtModule.register({
     secret: 'abc123',
     signOptions: { expiresIn: '1h' },

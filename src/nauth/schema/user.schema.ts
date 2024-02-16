@@ -1,10 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, HydratedDocument } from 'mongoose';
 
-export type UserDocument = HydratedDocument<AuthUserRegister>;
+export type UserDocument = HydratedDocument<User>;
+
 
 @Schema({collection : 'users'})
-export class AuthUserRegister extends Document {
+export class User extends Document {
 
   @Prop({type: String})
   name : string;
@@ -12,7 +13,7 @@ export class AuthUserRegister extends Document {
   @Prop({required : true , unique: true})
   email: string;
 
-  @Prop({required : true})
+  @Prop()
   password: string;
 
   @Prop({type: String })
@@ -21,11 +22,8 @@ export class AuthUserRegister extends Document {
   @Prop()
   hashed_rt: string;
 
-//   @Prop()
-//   otp: string;
-
-//   @Prop({default : false})
-//   isVerified: boolean;
+  @Prop()
+  picture : string; 
 }
 
-export const AuthUserRegistrationSchema = SchemaFactory.createForClass(AuthUserRegister);
+export const UserSchema = SchemaFactory.createForClass(User);
