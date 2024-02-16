@@ -13,8 +13,9 @@ export class ReviewService {
   async create(createReviewDto: ReviewDto): Promise<Review> {
     try{
     const createdReview = new this.reviewModel(createReviewDto);
-    await createdReview.save();
-    return createdReview;
+    const savedReview = await createdReview.save();
+    console.log('Review created successfully'); 
+      return savedReview;
     }catch(error){
         console.error('Error occurred while creating review:', error);
         throw error;
@@ -22,7 +23,9 @@ export class ReviewService {
   }
 
   async findAll(): Promise<Review[]> {
-    return this.reviewModel.find().exec();
+    const reviews =await this.reviewModel.find().exec();
+    console.log('All reviews retrieved successfully');
+    return reviews;
   }
 
   async findById(id: string): Promise<Review> {
@@ -30,12 +33,14 @@ export class ReviewService {
     if (!review) {
       throw new NotFoundException('Review not found');
     }
+    console.log('Review successfully found by given id ');
     return review;
-  }                       //////////// i have to add find by dr id also//////
+  }                       
 
   async findByDoctorId(doctorId: string): Promise<Review[]> {
     try {
       const reviews = await this.reviewModel.find({ doctor_id: doctorId }).exec();
+      console.log('Reviews found by doctor ID:');
       return reviews;
     } catch (error) {
       console.error('Error occurred while finding reviews by doctor ID:', error);
@@ -44,20 +49,25 @@ export class ReviewService {
   }
   
   async findByPatientId(patientId: string): Promise<Review[]> {
-    return this.reviewModel.find({ patient_id: patientId }).exec();
-  }
+    const reviews=await this.reviewModel.find({ patient_id: patientId }).exec();
+    console.log('Reviews found by patient ID:');
+    return reviews;
+   }
 
   async findByEmail(email: string): Promise<Review[]> {
-    return this.reviewModel.find({ 'story.email': email }).exec();
+    const reviews=await this.reviewModel.find({ 'story.email': email }).exec();
+    console.log('Reviews found by user email:');
+    return reviews;
   }
 
-  async update(id: string, updateReviewDto: ReviewDto): Promise<Review> {
+ async update(id: string, updateReviewDto: ReviewDto): Promise<Review> {
     const updatedReview = await this.reviewModel
       .findByIdAndUpdate(id, updateReviewDto, { new: true })
       .exec();
     if (!updatedReview) {
       throw new NotFoundException('Review not found');
     }
+    console.log('Review updated successfully:', updatedReview);
     return updatedReview;
   }
 
@@ -66,6 +76,7 @@ export class ReviewService {
     if (!deletedReview) {
       throw new NotFoundException('Review not found');
     }
+    console.log('Review deleted successfully:', deletedReview);
     return deletedReview;
   }
 }
