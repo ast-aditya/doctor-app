@@ -20,14 +20,10 @@ export class DoctorsService {
   // }
   async create(create_Doctor_DTO: DoctorPrfDto, user_Id : string) {
     try {
-      const {gender, specialization, address, Education, experience, contactNumber } = create_Doctor_DTO;
+      const { gender, specialization, address, Education, experience, contactNumber } = create_Doctor_DTO;
       const user = await this.UserService.getUserbyId(user_Id);
       
-        // const createdPrescription = new this.doctorProfileModel(create_Doctor_DTO);
-        // const doctor_Profile = await createdPrescription.save();
-        // return doctor_Profile;
       const newProfile = new this.doctorProfileModel({
-
         name: user.name,
         email: user.email, 
         gender: gender,

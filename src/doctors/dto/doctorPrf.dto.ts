@@ -108,6 +108,10 @@ export class storiesDto{
 export class DoctorPrfDto {
   @ApiProperty()
   @IsString()
+  sub: string;
+
+  @ApiProperty()
+  @IsString()
   name: string;
 
   @ApiProperty()
@@ -115,7 +119,7 @@ export class DoctorPrfDto {
   email: string;
 
   @ApiProperty()
-  @IsEmail()
+  @IsString()
   gender: string;
 
   @ApiProperty()

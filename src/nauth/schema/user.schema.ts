@@ -7,6 +7,9 @@ export type UserDocument = HydratedDocument<User>;
 @Schema({collection : 'users'})
 export class User extends Document {
 
+  // @Prop()
+  // sub: string;
+
   @Prop({type: String})
   name : string;
 

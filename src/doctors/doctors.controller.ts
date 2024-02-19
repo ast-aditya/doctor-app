@@ -10,7 +10,7 @@ import { Response } from 'express';
 @Controller('doctors')
 export class DoctorsController {
   constructor(private readonly doctorProfileService: DoctorsService) {}
-  
+  @Public()
   @Post('create')
   @ApiOperation({ summary: 'Create Doctor' })
    @ApiResponse({ status: 201, description: 'The Doctor has been successfully created.'})
@@ -23,6 +23,8 @@ export class DoctorsController {
    async createDoctor(@Body() create_Doctor_DTO: DoctorPrfDto,  @GetCurrentUserId() user_Id : string,@Res() res: Response): Promise<any> {
       return this.doctorProfileService.create(create_Doctor_DTO, user_Id);
   }
+
+
   @Public()
   @Get()
   async getAllProfiles(): Promise<DoctorProfile[]> {
