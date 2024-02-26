@@ -7,9 +7,6 @@ export type UserDocument = HydratedDocument<User>;
 @Schema({collection : 'users'})
 export class User extends Document {
 
-  // @Prop()
-  // sub: string;
-
   @Prop({type: String})
   name : string;
 
@@ -27,6 +24,19 @@ export class User extends Document {
 
   @Prop()
   picture : string; 
+
+  @Prop({default: false})
+  is_Verified: boolean;
+
+  @Prop({default: false})
+  is_Deleted: boolean;
+
+  @Prop()
+  hashedOtp: string;
+
+  @Prop()
+  otpExpires: Date;
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

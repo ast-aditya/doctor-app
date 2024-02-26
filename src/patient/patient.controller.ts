@@ -11,7 +11,6 @@ import { updatePatientProfile } from './dto/updatePatientProfile.dto';
 export class PatientController {
     constructor(private patientService: PatientService) { }
 
-
     @Post('create-profile')
     @HttpCode(HttpStatus.CREATED)
     @ApiOperation({ summary: 'Create patient' })

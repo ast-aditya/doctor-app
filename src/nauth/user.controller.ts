@@ -83,4 +83,14 @@ export class UserController {
         return this.nauthService.googleLogin(req);
     }  
 
+    @Post('verify')
+    async verify_User(@GetCurrentUserId() user_Id : any, @Body('otp') otp: string, @Res() res: Response){
+        const verification =  await this.nauthService.verify_User(user_Id, otp);
+        return res.status(200).json({ msg: 'verified' });
+    }
+
+    @Post('send-otp')
+    async sendOtp(@GetCurrentUser() user: any) {
+        return await this.nauthService.sendOtp(user);
+    }
 }

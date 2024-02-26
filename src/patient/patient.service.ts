@@ -16,10 +16,13 @@ export class PatientService {
   // to create profile for logged in user
   async createPatientProfile(createPatientProfile: createPatientProfile, user_Id : string) {
     try {
-        const {age, gender, dob, identification_Type, identification_Value, blood_Group, address, country_Code, contact} = createPatientProfile;
+      console.log(createPatientProfile)
+        const {gender, dob, identification_Type, identification_Value, blood_Group, address, country_Code, contact} = createPatientProfile;
         const user = await this.UserService.getUserbyId(user_Id);
-
+        console.log("this is the user profile")
+        console.log(user)
         const existing_Profile = await this.getProfileByID(user_Id)
+        console.log(existing_Profile)
         if(existing_Profile){
           throw new ConflictException('User Profile already exists')
         }
@@ -27,7 +30,6 @@ export class PatientService {
           user_Id: user_Id,
           name: user.name,
           email: user.email, 
-          age: age,
           gender: gender,
           dob: dob,
           identification_Type: identification_Type,
@@ -42,10 +44,15 @@ export class PatientService {
             country: address.country
           },
           country_Code: country_Code,
-          contact: contact
+          contact: contact,
+          is_Deleted: false
         });
 
         const userProfile = await newProfile.save();
+        console.log(
+          "saved user profile"
+        )
+        console.log(userProfile)
         console.log(`User Profile created successfully with Id : ${userProfile.id}`);
         return userProfile;
     } catch (error) {
@@ -89,7 +96,8 @@ async updatePatientProfile(updatePatientProfile: updatePatientProfile, user_Id :
           country: address.country
         },
         country_Code: country_Code,
-        contact: contact
+        contact: contact,
+        is_Deleted: false
       };
 
       return await this.patientProfileModel.updateOne({ user_Id: user_Id }, { $set: updatedProfile }, { upsert: true });
@@ -125,7 +133,7 @@ async updatePatientProfile(updatePatientProfile: updatePatientProfile, user_Id :
         if(!existProfile){
             throw new NotFoundException('User Profile do not exists');
         }
-        return await this.patientProfileModel.deleteOne({ user_Id: user_Id });
+        return await this.patientProfileModel.updateOne({ user_Id: user_Id }, {$set : {is_Deleted: true}});
     } catch (error) {
         console.error(`Error occurred deleting the user profile: ${error}`);
         throw error;
@@ -136,7 +144,8 @@ async getProfileByID(user_Id: string){
   try {
     const profile = await this.patientProfileModel.findOne({ user_Id });
     if (!profile) {
-      throw new NotFoundException('Patient profile not found');
+      // throw new NotFoundException('Patient profile not found');
+      return null;
     }
     return profile;
   } catch (error) {
@@ -152,7 +161,7 @@ async deleteProfileByID(user_Id: string){
     if(!existProfile){
       throw new NotFoundException('User Profile do not exists');
     }
-    return await this.patientProfileModel.deleteOne({ user_Id: user_Id });
+    return await this.patientProfileModel.updateOne({ user_Id: user_Id }, {$set : {is_Deleted: true}});
   } catch (error) {
     console.error(`Error occurred deleting the user profile: ${error}`);
     throw error;

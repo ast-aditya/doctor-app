@@ -1,8 +1,29 @@
 import { IsEmail, IsNotEmpty, IsString, IsOptional } from "class-validator";
 
+import { registerDecorator, ValidationOptions, ValidationArguments } from 'class-validator';
+
+export function IsHTML(validationOptions?: ValidationOptions) {
+  return function (object: Object, propertyName: string) {
+    registerDecorator({
+      name: 'IsHTML',
+      target: object.constructor,
+      propertyName: propertyName,
+      options: validationOptions,
+      validator: {
+        validate(value: any, args: ValidationArguments) {
+          const htmlRegex = /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/;
+          return typeof value === 'string' && htmlRegex.test(value);
+        },
+        defaultMessage(args: ValidationArguments) {
+          return 'Text ($value) must be a valid HTML string';
+        }
+      }
+    });
+  };
+}
+
 export class register_Dto {
-  @IsNotEmpty()
-  @IsString()
+  @IsHTML()
   name: string;
 
   @IsNotEmpty()
@@ -17,7 +38,7 @@ export class register_Dto {
   @IsString()
   user_Type: string;
 
-  @IsString()
+  // @IsString()
   hashed_rt: string;
 
   @IsOptional()
@@ -60,52 +81,3 @@ export class login_Dto {
   @IsString()
   password: string;
 }
-
-
-// import { IsEmail, IsNotEmpty, IsString } from "class-validator";
-
-// export class register_Dto{
-
-//     @IsNotEmpty()
-//     @IsString()
-//     name: string;
-
-//     @IsNotEmpty()
-//     @IsEmail()
-//     email: string;
-  
-//     @IsNotEmpty()
-//     @IsString()
-//     password: string;
-
-//     // @IsNotEmpty()
-//     // @IsString()
-//     role: string;
-// }
-// export class update_Dto{
-
-//     @IsNotEmpty()
-//     @IsString()
-//     name?: string;
-
-//     @IsNotEmpty()
-//     @IsEmail()
-//     email?: string;
-  
-//     @IsNotEmpty()
-//     @IsString()
-//     password: string;
-
-//     @IsNotEmpty()
-//     @IsString()
-//     role?: string;
-// }
-// export class login_Dto{
-//     @IsNotEmpty()
-//     @IsEmail()
-//     email: string;
-  
-//     @IsNotEmpty()
-//     @IsString()
-//     password: string;
-// }

@@ -59,6 +59,9 @@ export class PatientProfile extends Document {
 
   @Prop({ required: true })
   contact: number;
+
+  @Prop({default: false})
+  is_Deleted: boolean;
 }
 
 export const PatientProfileSchema = SchemaFactory.createForClass(PatientProfile);

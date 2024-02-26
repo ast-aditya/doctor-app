@@ -8,6 +8,7 @@ import { Tokens } from './types';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from './user.service';
 import { OAuth2Client } from 'google-auth-library';
+import { EmailService } from 'src/send-email/send-email.service';
 
 const client = new OAuth2Client(
     process.env.OAUTH_CLIENT_ID,
@@ -18,16 +19,13 @@ const client = new OAuth2Client(
 export class NauthService {
     constructor(@InjectModel(User.name) private UserModel: Model<User>,
     private jwtService : JwtService,
-    private UserService : UserService){}
+    private UserService : UserService,
+    private EmailService: EmailService){}
     async googleLogin(req: any) {
         const user = req.user;
-        console.log(user)
         let existingUser = await this.UserService.getUserbyEmail(user.email)
-        console.log(existingUser)
       
         if(!existingUser){
-          console.log("inside create user google ")
-          console.log(user)
           const newUser = await this.UserService.createUser({
             name: user.firstName + " " + user.lastName,
             email: user.email,
@@ -85,12 +83,10 @@ export class NauthService {
             const user = await this.UserService.createUser({
                 name,
                 email,
-                password: hashedPassword,
-                // role,
+                password: hashedPassword
               });
             const tokens = await this.getTokens(user.id, user.email)
             await this.updateRtHash(user.id, tokens.refresh_token);
-            // console.log(`User created successfully with Id : ${user.id}`);
             return tokens;
         } catch (error) {
             console.error(`Error occurred during signup: ${error}`);
@@ -154,7 +150,72 @@ export class NauthService {
             );
         }
     }
-    
+    async verify_User(user_Id: string, otp: string) {
+      try {
+          const user = await this.UserService.getUserbyId(user_Id);
+          if (!user || !user.hashedOtp) {
+              throw new NotFoundException('User not found or OTP not generated');
+          }
+
+          if (Date.now() > user.otpExpires.getTime()) {
+              throw new ForbiddenException('OTP has expired');
+          }
+  
+          const isMatch = await bcrypt.compare(otp, user.hashedOtp);
+          if (!isMatch) {
+              throw new ForbiddenException('Invalid OTP');
+          }
+  
+          user.is_Verified = true;
+          user.hashedOtp = null;
+          user.otpExpires = null;
+          await user.save();
+  
+          return 'OTP verified successfully';
+      } catch (error) {
+          console.error(`Error occurred during OTP verification: ${error}`);
+          throw error;
+      }
+  }
+  
+    async sendOtp(user: any) {
+      // Generate OTP
+      console.log(user)
+      const otp = await this.generateOTP(user.sub);
+  
+      // Create the mail object
+      const mail = {
+        to: user.email,
+        subject: 'Your OTP',
+        from: process.env.FROM_EMAIL,
+        text: `Your OTP is ${otp}`,
+        html: `<h1>Your OTP is ${otp}</h1>`,
+      };
+  
+      // Send the email
+      return await this.EmailService.sendEmail(mail);
+    }
+    async generateOTP(user_Id: string) {
+      try {
+          const otp = Math.floor(100000 + Math.random() * 900000).toString();
+          const hashed_Otp = await this.hashData(otp);
+  
+          const user = await this.UserService.getUserbyId(user_Id);
+          if (!user) {
+              throw new NotFoundException('User not found');
+          }
+  
+          user.hashedOtp = hashed_Otp;
+          user.otpExpires = new Date(Date.now() + 10*60*1000); // OTP expires after 10 minutes
+          await user.save();
+          return otp;
+      } catch (error) {
+          console.error(`Error occurred during OTP generation: ${error}`);
+          throw error;
+      }
+  }
+
+  
     async updateRtHash(user_Id: string, rt: string){
         const hash = await this.hashData(rt);
         const user = await this.UserModel.findOneAndUpdate({ _id: user_Id }, { hashed_rt: hash });
@@ -168,6 +229,7 @@ export class NauthService {
             this.jwtService.signAsync({
                 sub : user_id,
                 email,
+                
             },
             {
                 secret: 'at-secret',

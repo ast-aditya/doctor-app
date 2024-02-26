@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
 import { PatientModule } from './patient/patient.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DoctorsModule } from './doctors/doctors.module';
@@ -15,14 +14,15 @@ import { AtGuard } from './common/guards';
 import { ClinicModule } from './clinic/clinic.module';
 import { SpecializationModule } from './specialization/specialization.module';
 import { ConfigModule } from '@nestjs/config'; 
-
+// import { SendgridService } from './send-email/send-email.service';
+// import { MailController } from './send-email/send-email.controller';
 @Module({
   imports: 
   
   [ConfigModule.forRoot({
     envFilePath: `.env` , isGlobal: true
    })
-   ,MongooseModule.forRoot(process.env.MONGO_URI), AuthModule, PatientModule, DoctorsModule, PrescrModule,ClinicModule, AppointmentsModule, MailerModule.forRoot({
+   ,MongooseModule.forRoot(process.env.MONGO_URI), PatientModule, DoctorsModule, PrescrModule,ClinicModule, AppointmentsModule, MailerModule.forRoot({
     transport: {
       host: 'smtp.gmail.com',
       auth: {
@@ -39,6 +39,7 @@ import { ConfigModule } from '@nestjs/config';
     {
       provide: APP_GUARD,
       useClass: AtGuard,
-    }],
+    },
+  ],
 })
 export class AppModule { }

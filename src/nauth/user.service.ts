@@ -106,7 +106,11 @@ export class UserService {
     try {
       const user = await this.getUserbyId(userId);
       console.log(user)
-      return await this.UserModel.findByIdAndDelete(userId);
+      // return await this.UserModel.findByIdAndDelete(userId);
+      user.is_Deleted = true;
+      await user.save();
+
+      return user;
     } catch (error) {
       if (
         error instanceof ConflictException ||

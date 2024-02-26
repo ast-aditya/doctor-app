@@ -55,8 +55,8 @@ export class createPatientProfile {
     description: 'age of the patient',
     example: 18
   })
-  @IsInt()
-  readonly age: number;
+  // @IsInt()
+  // readonly age: number;
 
   @ApiProperty({
     description: 'gender of the patient',
